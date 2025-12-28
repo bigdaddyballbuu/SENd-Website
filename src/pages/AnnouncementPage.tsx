@@ -38,7 +38,7 @@ interface Announcement {
    7. Paste the link below in GOOGLE_SHEET_CSV_URL.
 ========================= */
 
-const GOOGLE_SHEET_CSV_URL = "************************ไว้ใส่ลิ้ง Google Sheet อัปเดตข้อมูลประกาศ *****************************"; 
+const GOOGLE_SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRN-8ANTJTDE9iz5IkwO5bNc7DUJfWhBGOXRtnZglZybSA_Urcdlavj_xQEvHJu4Sc7zTTqJgKqpmow/pub?gid=0&single=true&output=csv"; 
 
 /* =========================
    CSV PARSER HELPER
