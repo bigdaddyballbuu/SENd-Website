@@ -1,0 +1,131 @@
+@import "tailwindcss";
+
+/* ===== Brand & System Tokens ===== */
+@theme {
+  /* Brand */
+  --color-brand: #ff2500;
+  --color-brand-secondary: #fe3d00;
+  --color-brand-dark: #cc1e00;
+
+  /* Light */
+  --color-bg: #ffffff;
+  --color-surface: #ffffff;
+  --color-border: #e5e7eb;
+  --color-text: #374151;
+  --color-text-muted: #6b7280;
+
+
+}
+
+/* ===== Base ===== */
+body {
+  font-family: "Poppins", "Kanit", sans-serif;
+  background-color: var(--color-bg);
+  color: var(--color-text);
+}
+
+
+
+/* ===== Buttons ===== */
+.btn {
+  @apply inline-flex items-center justify-center gap-2
+    rounded-xl px-5 py-3 font-medium
+    transition-all duration-200;
+}
+
+/* Primary */
+.btn-primary {
+  background: linear-gradient(135deg, var(--color-brand), var(--color-brand-secondary));
+  color: #fff;
+}
+
+.btn-primary:hover {
+  background: var(--color-brand-dark);
+  box-shadow: 0 4px 12px rgba(255, 37, 0, 0.3);
+}
+
+/* Outline */
+.btn-outline {
+  border: 1px solid var(--color-brand);
+  color: var(--color-brand);
+  background: transparent;
+}
+
+.btn-outline:hover {
+  background-color: var(--color-brand);
+  color: #fff;
+}
+
+/* Disabled */
+.btn:disabled {
+  @apply opacity-50 cursor-not-allowed;
+}
+
+/* ===== Cards ===== */
+.card {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  @apply rounded-2xl p-6 shadow-sm;
+}
+
+
+
+/* Card title */
+.card-title {
+  @apply text-lg font-semibold mb-2;
+}
+
+/* Card subtitle */
+.card-subtitle {
+  color: var(--color-text-muted);
+  @apply text-sm;
+}
+
+/* ===== Navbar Theme ===== */
+.navbar {
+  background: linear-gradient(to right, rgba(255, 37, 0, 0.85), rgba(254, 61, 0, 0.85));
+  color: white;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+
+
+.navbar-link {
+  @apply transition;
+}
+
+.navbar-link:hover {
+  color: #ffe4e1; /* Lighter shade of red/pink for contrast */
+}
+
+
+.navbar-link {
+  @apply transition-transform duration-200;
+}
+
+.navbar-link:hover {
+  transform: translateX(-4px);
+}
+
+/* 🌞 Light mode */
+:root {
+  --bg: #ffffff;
+  --text: #1f2937;
+  --brand: #ff2500;
+  --card: #ffffff;
+  --border: #e5e7eb;
+}
+
+
+/* Animation Utilities */
+@keyframes gradient {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.animate-gradient {
+  background-size: 200% auto;
+  animation: gradient 3s ease infinite;
+}
