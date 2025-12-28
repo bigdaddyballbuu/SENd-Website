@@ -1,6 +1,6 @@
 # SENd Website (เว็บไซต์ SENd Service)
 
-เว็บไซต์สำหรับบริการ ส่ง-ซัก **SENd Web** พัฒนาด้วย **React + TypeScript + Vite**
+เว็บไซต์สำหรับบริการรับ-ส่งซักอบรีด **SENd Service** พัฒนาด้วย **React + TypeScript + Vite**
 
 ---
 
