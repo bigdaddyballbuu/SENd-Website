@@ -1,3 +1,4 @@
+import { useRef } from "react";
 import Navbar from "../components/Navbar";
 import Hero from "../components/Hero";
 import AppPreview from "../components/AppPreview";
@@ -8,11 +9,14 @@ import About from "../components/About";
 import Footer from "../components/Footer";
 import DownloadCTA from "../components/DownloadCTA";
 import SectionDivider from "../components/SectionDivide";
+
 export default function Home() {
+  const pageRef = useRef(null);
+
   return (
-    <>
+    <div ref={pageRef} className="relative w-full overflow-hidden">
       <Navbar />
-      <Hero />
+      <Hero dragConstraints={pageRef} />
       <DownloadCTA />
       <SectionDivider />
       <AppPreview />
@@ -24,6 +28,6 @@ export default function Home() {
       <SectionDivider />
       <About />
       <Footer />
-    </>
+    </div>
   );
 }

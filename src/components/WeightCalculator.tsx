@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import washerImg from "../assets/machines/washer4.jpg";
 
 /* ---------- ICONS (Simple SVGs) ---------- */
 const ShirtIcon = () => (
@@ -11,6 +12,12 @@ const ShirtIcon = () => (
 const PantIcon = () => (
   <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6 stroke-current">
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M6 2L3 22H10V12H14V22H21L18 2H6Z" />
+  </svg>
+);
+
+const ShortsIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6 stroke-current">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M6 2L4 16H10V10H14V16H20L18 2H6Z" />
   </svg>
 );
 
@@ -37,6 +44,7 @@ const WasherIcon = () => (
 const WeightCalculator = () => {
   const [shirts, setShirts] = useState(0);
   const [pants, setPants] = useState(0);
+  const [shorts, setShorts] = useState(0);
   const [towels, setTowels] = useState(0);
   const [bedsheets, setBedsheets] = useState(0);
   const [totalWeight, setTotalWeight] = useState(0);
@@ -46,14 +54,16 @@ const WeightCalculator = () => {
     const weight =
       shirts * 0.3 +
       pants * 0.5 +
+      shorts * 0.3 +
       towels * 0.7 +
       bedsheets * 1.5;
     setTotalWeight(weight);
-  }, [shirts, pants, towels, bedsheets]);
+  }, [shirts, pants, shorts, towels, bedsheets]);
 
   const reset = () => {
     setShirts(0);
     setPants(0);
+    setShorts(0);
     setTowels(0);
     setBedsheets(0);
   };
@@ -76,16 +86,16 @@ const WeightCalculator = () => {
         <div className="absolute bottom-[10%] right-[-5%] w-[400px] h-[400px] bg-blue-100/50 rounded-full blur-[80px]" />
       </div>
 
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <div className="max-w-5xl mx-auto px-6 sm:px-6 lg:px-8 relative z-10">
         
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
           
           {/* LEFT: CALCULATOR CARD */}
           <motion.div 
             initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            className="bg-white rounded-[2rem] shadow-xl shadow-slate-200/50 p-6 md:p-8 border border-slate-100 relative overflow-hidden"
+            className="lg:col-span-5 bg-white rounded-[2rem] shadow-xl shadow-slate-200/50 p-6 md:p-8 border border-slate-100 relative overflow-hidden"
           >
             {/* Header */}
             <div className="flex items-center justify-between mb-6">
@@ -120,6 +130,15 @@ const WeightCalculator = () => {
                 onChange={setPants} 
                 color="text-indigo-500"
                 bgColor="bg-indigo-50"
+              />
+              <Stepper 
+                label="กางเกงขาสั้น" 
+                sublabel="~0.3 kg"
+                icon={<ShortsIcon />} 
+                value={shorts} 
+                onChange={setShorts} 
+                color="text-teal-500"
+                bgColor="bg-teal-50"
               />
               <Stepper 
                 label="ผ้าขนหนู" 
@@ -203,17 +222,17 @@ const WeightCalculator = () => {
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
             transition={{ delay: 0.2 }}
-            className="hidden lg:flex flex-col items-center justify-center text-center relative"
+            className="lg:col-span-7 hidden lg:flex flex-col items-center justify-center text-center relative"
           >
-            <div className="relative w-full max-w-sm aspect-square">
+            <div className="relative w-full max-w-none aspect-square">
               <div className="absolute inset-0 bg-gradient-to-tr from-[#ff2500]/10 to-orange-100 rounded-full blur-3xl animate-pulse" />
               <img 
-                src="/src/assets/machines/washer4.jpg" 
+                src={washerImg} 
                 alt="Washing Machine" 
                 className="relative z-10 w-full h-full object-contain drop-shadow-2xl hover:scale-105 transition-transform duration-500"
               />
             </div>
-            <div className="mt-6 max-w-sm">
+            <div className="-mt-8 max-w-lg">
               <h3 className="text-xl font-bold text-slate-800 mb-2">เลือกเครื่องซักผ้าให้เหมาะ</h3>
               <p className="text-sm text-slate-500">
                 การใส่น้ำหนักผ้าให้พอดีกับขนาดเครื่อง จะช่วยให้ผ้าสะอาดขึ้นและถนอมเนื้อผ้า

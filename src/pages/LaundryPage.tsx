@@ -15,6 +15,52 @@ let DefaultIcon = L.icon({
   iconAnchor: [12, 41],
 });
 
+// Custom Icon Generator function
+const createStoreIcon = (logo: string) => {
+  return L.divIcon({
+    className: "custom-store-marker",
+    html: `
+      <div style="
+        position: relative;
+        width: 30px;
+        height: 40px;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+      ">
+        <div style="
+          width: 28px; 
+          height: 28px; 
+          background-color: #ff2500;
+          border-radius: 50% 50% 50% 0;
+          transform: rotate(-45deg);
+          border: 2px solid white;
+          box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        ">
+          <div style="
+            width: 24px;
+            height: 24px;
+            background: #ff2500;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transform: rotate(45deg);
+          ">
+            <img src="${logo}" style="width: 100%; height: 100%; object-fit: contain;" />
+          </div>
+        </div>
+      </div>
+    `,
+    iconSize: [30, 42],
+    iconAnchor: [15, 42],
+    popupAnchor: [0, -42],
+  });
+};
+
 L.Marker.prototype.options.icon = DefaultIcon;
 
 /* =========================
@@ -44,18 +90,19 @@ import maruLogo from "../assets/logos/maru2.png";
 import washenjoyLogo from "../assets/logos/washenjoy2.png";
 import washmeticLogo from "../assets/logos/washmetic2.png";
 import duckwashLogo from "../assets/logos/duckwash2.png";
+import websiteLogo from "../assets/logos/send-logo2.png";
 
 import otteriBranch1Img from "../assets/stores/otteriUturn.png";      // สาขา ปตท.แยกยูเทิน
 import otteriBranch2Img from "../assets/stores/otteriubon.png"; // สาขา ถนนศรีสะเกษ-อุบล
 import otteriBranch3Img from "../assets/stores/otteri3yag.png";  // สาขา สามแยก กวงเฮง
 import otteriBranch4Img from "../assets/stores/otterigunlalag.png"; // สาขา ปั้มปตท. ถนนศรีสะเกษกันทรลักษ์
 
-import laundrybarImg from "../assets/stores/laundrybar3.png";
-import kireiImg from "../assets/stores/kirei2.png";
-import maruImg from "../assets/stores/maru2.png";
-import washenjoyImg from "../assets/stores/washenjoy2.png";
-import washmeticImg from "../assets/stores/washmetic2.png";
-import duckwashImg from "../assets/stores/duckwash2.png";
+import laundrybarImg from "../assets/stores/laundrybar.png";
+import kireiImg from "../assets/stores/kirei.png";
+import maruImg from "../assets/stores/maru.png";
+import washenjoyImg from "../assets/stores/washenjoy.png";
+import washmeticImg from "../assets/stores/washmetic.png";
+import duckwashImg from "../assets/stores/duckwash.png";
 
 const stores: Store[] = [
   {
@@ -295,7 +342,7 @@ const LaundryPage: React.FC = () => {
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
             {stores.map((store) => (
-              <Marker key={store.id} position={[store.lat, store.lng]}>
+              <Marker key={store.id} position={[store.lat, store.lng]} icon={createStoreIcon(websiteLogo)}>
                 <Popup>
                   <div className="font-sans min-w-[200px]">
                     <h3 className="font-bold text-sm mb-1">{store.name}</h3>
@@ -307,7 +354,7 @@ const LaundryPage: React.FC = () => {
                       href={`https://www.google.com/maps/dir/?api=1&destination=${store.lat},${store.lng}`}
                       target="_blank"
                       rel="noreferrer"
-                      className="block w-full text-center bg-[#ff2500] text-white text-xs font-bold py-1.5 rounded-lg hover:bg-[#d92000] transition-colors"
+                      className="block w-full text-center bg-red-500 !text-white text-xs font-bold py-1.5 rounded-lg hover:bg-red-600"
                     >
                       นำทาง
                     </a>
@@ -508,13 +555,34 @@ const LaundryPage: React.FC = () => {
                 {/* LEFT: INFO */}
                 <div className="md:w-5/12 flex flex-col bg-white overflow-y-auto relative">
                   <div className="relative h-48 md:h-64 shrink-0">
+                    {/* Desktop: Image */}
                     <img
                       src={selectedStore.image}
-                      className="w-full h-full object-cover"
+                      className="hidden md:block w-full h-full object-cover"
                       alt="Store Front"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-6">
+                    <div className="hidden md:flex absolute inset-0 bg-gradient-to-t from-black/60 to-transparent items-end p-6">
                       <img src={selectedStore.logo} className="h-12 bg-white/90 p-2 rounded-lg backdrop-blur-sm" alt="logo" />
+                    </div>
+
+                    {/* Mobile: Map */}
+                    <div className="md:hidden w-full h-full relative z-0">
+                      <MapContainer 
+                        center={[selectedStore.lat, selectedStore.lng]} 
+                        zoom={15} 
+                        scrollWheelZoom={false} 
+                        className="h-full w-full"
+                        key={`mobile-${selectedStore.id}`}
+                      >
+                        <TileLayer
+                          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                        />
+                        <Marker 
+                          position={[selectedStore.lat, selectedStore.lng]} 
+                          icon={createStoreIcon(websiteLogo)}
+                        />
+                      </MapContainer>
                     </div>
                     <button
                       onClick={() => setSelectedStore(null)}
@@ -579,18 +647,26 @@ const LaundryPage: React.FC = () => {
                 </div>
 
                 {/* RIGHT: MAP */}
-                <div className="md:w-7/12 bg-slate-100 relative min-h-[300px] md:min-h-0">
+                <div className="hidden md:block md:w-7/12 bg-slate-100 relative min-h-[300px] md:min-h-0">
                   {/* Custom Map UI Wrapper */}
-                  <iframe
-                    title="map"
-                    className="w-full h-full grayscale-[20%] hover:grayscale-0 transition-all duration-700"
-                    loading="lazy"
-                    src={`https://www.openstreetmap.org/export/embed.html?bbox=${selectedStore.lng - 0.005
-                      },${selectedStore.lat - 0.005
-                      },${selectedStore.lng + 0.005
-                      },${selectedStore.lat + 0.005
-                      }&layer=mapnik&marker=${selectedStore.lat},${selectedStore.lng}`}
-                  />
+                  <div className="absolute inset-0 w-full h-full grayscale-[20%] hover:grayscale-0 transition-all duration-700">
+                    <MapContainer 
+                      center={[selectedStore.lat, selectedStore.lng]} 
+                      zoom={15} 
+                      scrollWheelZoom={false} 
+                      className="h-full w-full"
+                      key={selectedStore.id} // Add key to force re-render when store changes
+                    >
+                      <TileLayer
+                        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                      />
+                      <Marker 
+                        position={[selectedStore.lat, selectedStore.lng]} 
+                        icon={createStoreIcon(websiteLogo)}
+                      />
+                    </MapContainer>
+                  </div>
                   <div className="absolute bottom-4 right-4 bg-white/90 backdrop-blur px-4 py-2 rounded-lg text-xs shadow-lg text-slate-500 border border-slate-200">
                     📍 {selectedStore.lat.toFixed(4)}, {selectedStore.lng.toFixed(4)}
                   </div>

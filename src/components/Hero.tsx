@@ -11,7 +11,7 @@ import bike from "../assets/hero/bike.png";
 
 const images = [hero1, hero2, hero3, hero4, hero5];
 
-export default function Hero() {
+export default function Hero({ dragConstraints }: { dragConstraints?: React.RefObject<any> }) {
   const [current, setCurrent] = useState(0);
 
   useEffect(() => {
@@ -62,6 +62,7 @@ export default function Hero() {
             <motion.img
               src={bike}
               drag
+              dragConstraints={dragConstraints}
               whileDrag={{ rotate: 8, scale: 1.02 }}
               dragElastic={0.15}
               className="w-[100%] sm:w-full max-w-sm md:max-w-3xl lg:max-w-5xl object-contain drop-shadow-2xl z-50 relative"

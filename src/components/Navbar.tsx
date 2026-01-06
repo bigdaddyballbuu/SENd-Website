@@ -32,9 +32,9 @@ export default function Navbar() {
         <div className="hidden md:flex gap-8 font-normal ml-auto">
           <Link to="/" className="navbar-link">หน้าหลัก</Link>
           <Link to="/laundry" className="navbar-link">ร้านสะดวกซัก</Link>
+          <Link to="/partner" className="navbar-link">สมัครเป็นพาร์ทเนอร์</Link>
           <Link to="/announcement" className="navbar-link">กระดานข่าว</Link>
           <Link to="/help-center" className="navbar-link">ศูนย์ช่วยเหลือ</Link>
-          <Link to="/partner" className="navbar-link">สมัครเป็นพาร์ทเนอร์</Link>
         </div>
 
         {/* ACTIONS */}
@@ -61,18 +61,18 @@ export default function Navbar() {
             className="md:hidden bg-slate-900 text-white"
           >
             <div className="px-6 py-6 flex flex-col gap-4 text-base">
-              <a onClick={() => setOpen(false)} href="/" className="navbar-link">
+              <Link onClick={() => setOpen(false)} to="/" className="navbar-link">
                 หน้าหลัก
-              </a>
-              <a onClick={() => setOpen(false)} href="/laundry" className="navbar-link">
+              </Link>
+              <Link onClick={() => setOpen(false)} to="/laundry" className="navbar-link">
                 ร้านสะดวกซัก
-              </a>
-              <a onClick={() => setOpen(false)} href="/announcement" className="navbar-link">
+              </Link>
+              <Link onClick={() => setOpen(false)} to="/announcement" className="navbar-link">
                 กระดานข่าว
-              </a>
-              <a onClick={() => setOpen(false)} href="/help-center" className="navbar-link">
+              </Link>
+              <Link onClick={() => setOpen(false)} to="/help-center" className="navbar-link">
                 ศูนย์ช่วยเหลือ
-              </a>
+              </Link>
             </div>
           </motion.div>
         )}
