@@ -7,15 +7,15 @@ import {
   Shield, HeartHandshake, MessageSquareText, Copy, RefreshCw, X,
   CheckCircle2, AlertCircle, PartyPopper, Flag, Clock, ChevronDown, XCircle
 } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
+import { useToast } from "../hooks/use-toast";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 
 // Assets
-import bgImage from "@/assets/images/washer.png";
-import scooterImage from "@/assets/hero/bike.png";
+import bgImage from "../assets/images/washer.png";
+import scooterImage from "../assets/hero/bike.png";
 import { stores } from "./LaundryPage";
-import LineFloatingButton from "@/components/LineFloatingButton";
+import LineFloatingButton from "../components/LineFloatingButton";
 
 const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx-k5yX-bhFBLN9ybuh20XeYM6Yt-mpWrN9BNQg1QZP-mRsZ9HaGla-acbIvnCqQU7GJQ/exec";
 

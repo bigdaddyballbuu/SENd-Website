@@ -1,7 +1,6 @@
 // src/components/ui/toaster.tsx
-import { useToast } from "@/hooks/use-toast";
+import { useToast } from "../../hooks/use-toast";
 import { X, CheckCircle2, AlertCircle, Info } from "lucide-react";
-import { useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 export function Toaster() {

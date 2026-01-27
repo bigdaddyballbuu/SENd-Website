@@ -173,13 +173,19 @@ const HelpCenterPage = () => {
                 <div className="relative">
                     <div className="absolute inset-0 bg-white/30 rounded-2xl blur-lg animate-pulse" />
                     <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-2xl bg-white text-[#ff2500] shadow-lg relative z-10 group-hover:rotate-12 transition-transform duration-300">
-                        <svg className="w-10 h-10 drop-shadow-sm" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                        <svg className="w-10 h-10 drop-shadow-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          {/* T-shirt shape */}
+                          <path d="M20.38 3.46L16 2a4 4 0 01-8 0L3.62 3.46a2 2 0 00-1.34 2.23l.58 3.47a1 1 0 00.99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 002-2V10h2.15a1 1 0 00.99-.84l.58-3.47a2 2 0 00-1.34-2.23z" />
+                          {/* Exclamation mark */}
+                          <line x1="12" y1="9" x2="12" y2="13" strokeWidth="2.5" />
+                          <circle cx="12" cy="16" r="0.5" fill="currentColor" strokeWidth="2" />
+                        </svg>
                     </div>
                 </div>
 
                 <div className="text-white relative z-10">
                   <h3 className="text-2xl font-black sm:text-3xl tracking-tight drop-shadow-md flex items-center gap-2">
-                    แจ้งเคลมสินค้า
+                    แจ้งปัญหา/เคลมสินค้า
                   </h3>
                   <p className="mt-2 text-sm font-medium text-orange-50/90 sm:text-lg leading-relaxed max-w-[280px] sm:max-w-none">
                     พบปัญหาการใช้งาน? สินค้าเสียหาย? <br/>
