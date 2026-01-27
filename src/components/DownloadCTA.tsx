@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
-import googlePlay from "../assets/store/google-play.png";
-import appStore from "../assets/store/app-store.png";
+import googlePlay from "../assets/store/google-play.svg";
+import appStore from "../assets/store/app-store.svg";
 
 const DownloadCTA = () => {
   return (
@@ -29,24 +29,24 @@ const DownloadCTA = () => {
           {/* Google Play */}
           <a
             href="https://play.google.com/store/apps/details?id=com.sendcompany.send_delivery"
-            className="hover:scale-105 transition-transform"
+            className="hover:scale-105 hover:drop-shadow-[0_0_12px_rgba(255,69,0,0.7)] transition-all duration-300 flex items-center justify-center w-44 h-14"
           >
             <img
               src={googlePlay}
               alt="Download on Google Play"
-              className="h-14 mx-auto"
+              className="w-full h-full object-contain"
             />
           </a>
 
           {/* App Store */}
           <a
             href="https://apps.apple.com/us/app/send-delivery/id6474961079"
-            className="hover:scale-105 transition-transform"
+            className="hover:scale-105 hover:drop-shadow-[0_0_12px_rgba(255,69,0,0.7)] transition-all duration-300 flex items-center justify-center w-44 h-14"
           >
             <img
               src={appStore}
               alt="Download on App Store"
-              className="h-14 mx-auto"
+              className="w-full h-full object-contain"
             />
           </a>
         </motion.div>

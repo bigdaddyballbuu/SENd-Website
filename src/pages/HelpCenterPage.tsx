@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 
 /* =========================
@@ -154,6 +155,47 @@ const HelpCenterPage = () => {
               เราพร้อมดูแลคุณทุกขั้นตอน
             </p>
           </motion.div>
+        </div>
+
+        {/* CLAIM BUTTON - ENHANCED */}
+        <div className="mb-16 max-w-2xl mx-auto relative z-10">
+          {/* Pulsing Background */}
+          <div className="absolute -inset-1 bg-gradient-to-r from-[#ff2500] to-[#ff8800] rounded-3xl blur opacity-30 animate-pulse transition duration-1000 group-hover:duration-200"></div>
+          
+          <Link to="/claim" className="group relative block w-full overflow-hidden rounded-3xl bg-gradient-to-br from-[#ff2500] to-[#ff4000] p-1 shadow-2xl transition-all duration-300 hover:scale-[1.02] hover:shadow-orange-500/50">
+            {/* Shimmer Effect */}
+            <div className="absolute inset-0 -translate-x-full group-hover:animate-[shimmer_2s_infinite] bg-gradient-to-r from-transparent via-white/20 to-transparent z-20" />
+            
+            <div className="relative flex h-full items-center justify-between bg-white/5 px-6 py-8 sm:px-10 backdrop-blur-sm transition-colors group-hover:bg-white/10">
+              <div className="flex items-center gap-6">
+                
+                {/* Icon Box */}
+                <div className="relative">
+                    <div className="absolute inset-0 bg-white/30 rounded-2xl blur-lg animate-pulse" />
+                    <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-2xl bg-white text-[#ff2500] shadow-lg relative z-10 group-hover:rotate-12 transition-transform duration-300">
+                        <svg className="w-10 h-10 drop-shadow-sm" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                    </div>
+                </div>
+
+                <div className="text-white relative z-10">
+                  <h3 className="text-2xl font-black sm:text-3xl tracking-tight drop-shadow-md flex items-center gap-2">
+                    แจ้งเคลมสินค้า
+                  </h3>
+                  <p className="mt-2 text-sm font-medium text-orange-50/90 sm:text-lg leading-relaxed max-w-[280px] sm:max-w-none">
+                    พบปัญหาการใช้งาน? สินค้าเสียหาย? <br/>
+                  </p>
+                </div>
+              </div>
+
+              {/* Arrow */}
+              <div className="hidden rounded-full bg-white/20 p-3 text-white sm:block group-hover:bg-white group-hover:text-[#ff2500] transition-all duration-300 group-hover:translate-x-1">
+                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M9 5l7 7-7 7"></path></svg>
+              </div>
+            </div>
+
+            {/* Decor */}
+            <div className="absolute -top-20 -right-20 h-64 w-64 rounded-full bg-white/10 blur-3xl pointer-events-none group-hover:bg-white/20 transition-all duration-500"></div>
+          </Link>
         </div>
 
         {/* SEARCH BAR */}

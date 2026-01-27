@@ -2,6 +2,7 @@ import { Suspense, lazy } from "react";
 import { Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import ScrollToTop from "./components/ScrollToTop";
+import { Toaster } from "./components/ui/toaster";
 
 // Lazy Load Pages
 const Home = lazy(() => import("./pages/Home"));
@@ -13,6 +14,7 @@ const AboutPage = lazy(() => import("./pages/AboutPage"));
 const PrivacyPage = lazy(() => import("./pages/PrivacyPage"));
 const TermsPage = lazy(() => import("./pages/TermsPage"));
 const BlogPage = lazy(() => import("./pages/BlogPage"));
+const ProductClaimPage = lazy(() => import("./pages/ProductClaimPage"));
 
 function App() {
   return (
@@ -37,10 +39,12 @@ function App() {
           <Route path="/privacy" element={<PrivacyPage />} />
           <Route path="/terms" element={<TermsPage />} />
           <Route path="/blog" element={<BlogPage />} />
+          <Route path="/claim" element={<ProductClaimPage />} />
         </Routes>
       </Suspense>
 
       <ScrollToTop />
+      <Toaster />
     </>
   );
 }

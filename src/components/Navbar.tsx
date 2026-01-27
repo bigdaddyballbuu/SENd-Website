@@ -22,10 +22,11 @@ export default function Navbar() {
             stiffness: 120,
             damping: 14,
           }}
-          className="flex items-center gap-0"
         >
-          <img src={logo} alt="SENd" className="h-20 w-auto" />
-          <span className="font-bold text-2xl">SENd</span>
+          <Link to="/" className="flex items-center gap-0">
+            <img src={logo} alt="SENd" className="h-20 w-auto" />
+            <span className="font-bold text-2xl">SENd</span>
+          </Link>
         </motion.div>
 
         {/* DESKTOP MENU */}

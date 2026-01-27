@@ -4,8 +4,8 @@ import {
   AnimatePresence,
 } from "framer-motion";
 
-import phone1 from "../assets/phones/phone-1.png";
-import phone2 from "../assets/phones/phone-2.png";
+import phone1 from "../assets/phones/phone1.png";
+import phone2 from "../assets/phones/phone2.png";
 import phone3 from "../assets/phones/phone-3.png";
 import phone4 from "../assets/phones/phone-4.png";
 
@@ -19,7 +19,7 @@ const slideThemes = [
   { bubble: "bg-red-300/70", wave: "#fca5a5", glow: "bg-red-500", accent: "#ff2500" },
   { bubble: "bg-blue-300/70", wave: "#93c5fd", glow: "bg-blue-500", accent: "#3b82f6" },
   { bubble: "bg-emerald-300/70", wave: "#6ee7b7", glow: "bg-emerald-500", accent: "#10b981" },
-  { bubble: "bg-purple-300/70", wave: "#d8b4fe", glow: "bg-purple-500", accent: "#a855f7" },
+  { bubble: "bg-orange-300/70", wave: "#f5af53ff", glow: "bg-orange-500", accent: "#ff961e" },
 ];
 
 

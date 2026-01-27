@@ -66,7 +66,7 @@ L.Marker.prototype.options.icon = DefaultIcon;
 /* =========================
    TYPES
 ========================= */
-interface Store {
+export interface Store {
   id: string;
   name: string;
   logo: string;
@@ -104,7 +104,7 @@ import washenjoyImg from "../assets/stores/washenjoy.png";
 import washmeticImg from "../assets/stores/washmetic.png";
 import duckwashImg from "../assets/stores/duckwash.png";
 
-const stores: Store[] = [
+export const stores: Store[] = [
   {
     id: "otteri-sisaket1",
     name: "Otteri สาขา ปตท.แยกยูเทิน ศรีสะเกษ",
