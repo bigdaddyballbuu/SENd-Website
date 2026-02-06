@@ -127,9 +127,7 @@ import maruImg from "../assets/stores/maru.png";
 import washenjoyImg from "../assets/stores/washenjoy.png";
 import washmeticImg from "../assets/stores/washmetic.png";
 import duckwashImg from "../assets/stores/duckwash.png";
-
-// Placeholder image for stores without images yet
-const placeholderImg = "https://images.unsplash.com/photo-1545173168-9f1947eebb8f?q=80&w=400&auto=format&fit=crop";
+import placeholderImg from "../assets/stores/placeholder.png";
 
 export const stores: Store[] = [
   // ==================== ศรีสะเกษ ====================
