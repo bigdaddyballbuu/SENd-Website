@@ -1,6 +1,9 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
+// Hero background image
+import partnerHeroBg from "../assets/bg/bg-laundry.png";
+
 const LAUNDRY_FORM_URL = "https://forms.gle/asG3b6G8pkm4dTXx6";
 const RIDER_FORM_URL = "https://forms.gle/ULVAJJoJWsJrhE8A7";
 
@@ -16,63 +19,76 @@ const PartnerPage: React.FC = () => {
   }, []);
 
   return (
-    <section className="min-h-screen bg-[#F8F9FB] text-slate-900 pb-20 pt-24">
+    <section className="min-h-screen bg-[#F8F9FB] text-slate-900 pb-20">
 
-      {/* HERO SECTION */}
-      <div className="relative overflow-hidden mb-20">
-        {/* Background Decoration */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[600px] bg-gradient-to-b from-orange-100/50 to-transparent rounded-full blur-3xl -z-10 pointer-events-none" />
+      {/* HERO SECTION WITH BACKGROUND IMAGE */}
+      <div className="relative">
+        {/* Background Image Container - ends at middle of stats */}
+        <div className="absolute inset-x-0 top-0 h-[calc(100%+80px)] overflow-hidden">
+          {/* Background Image */}
+          <div 
+            className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+            style={{
+              backgroundImage: `url(${partnerHeroBg})`
+            }}
+          />
+          {/* Dark Overlay */}
+          <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/50 to-black/70" />
+          {/* Bottom fade to match page background */}
+          <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#F8F9FB] to-transparent" />
+        </div>
 
-        <div className="max-w-7xl mx-auto px-6 text-center pt-10">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
+        <div className="relative z-10 pt-24 pb-20">
+          <div className="max-w-7xl mx-auto px-6 text-center pt-10">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+            >
+              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/20 backdrop-blur-sm border border-white/30 text-white text-sm font-bold tracking-wide mb-6">
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#ff2500] opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-[#ff2500]"></span>
+                </span>
+                รับสมัครพาร์ทเนอร์รุ่นใหม่
+              </div>
 
-            transition={{ duration: 0.8 }}
-          >
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-orange-50 border border-orange-100 text-[#ff2500] text-sm font-bold tracking-wide mb-6">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#ff2500] opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-[#ff2500]"></span>
-              </span>
-              รับสมัครพาร์ทเนอร์รุ่นใหม่
-            </div>
+              <h1 className="text-4xl md:text-6xl font-extrabold text-white mb-6 leading-tight tracking-tight drop-shadow-lg">
+                เติบโตไปกับธุรกิจ <br className="hidden md:block" />
+                สะดวกซักระดับ <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#ff6b4a] to-[#ffb347]">มืออาชีพ</span>
+              </h1>
 
-            <h1 className="text-4xl md:text-6xl font-extrabold text-slate-900 mb-6 leading-tight tracking-tight">
-              เติบโตไปกับธุรกิจ <br className="hidden md:block" />
-              สะดวกซักระดับ <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#ff2500] to-[#fe3d00]">มืออาชีพ</span>
-            </h1>
+              <p className="text-lg md:text-xl text-white/90 max-w-3xl mx-auto mb-10 leading-relaxed drop-shadow">
+                ยกระดับธุรกิจร้านสะดวกซักและงานบริการของคุณด้วยเทคโนโลยีจาก SENd <br className="hidden md:block" />
+                แพลตฟอร์มที่เชื่อมโยงลูกค้าเข้ากับบริการของคุณอย่าง ไร้รอยต่อ
+              </p>
 
-            <p className="text-lg md:text-xl text-slate-600 max-w-3xl mx-auto mb-10 leading-relaxed">
-              ยกระดับธุรกิจร้านสะดวกซักและงานบริการของคุณด้วยเทคโนโลยีจาก SENd <br className="hidden md:block" />
-              แพลตฟอร์มที่เชื่อมโยงลูกค้าเข้ากับบริการของคุณอย่าง ไร้รอยต่อ
-            </p>
-
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button
-                onClick={() => setOpen(true)}
-                className="px-8 py-4 bg-[#ff2500] text-white rounded-xl font-bold text-lg shadow-xl shadow-[#ff2500]/30 hover:bg-[#cc1e00] hover:scale-105 transition-all duration-300 transform"
-              >
-                สมัครเป็นพาร์ทเนอร์
-              </button>
-              <button 
-                onClick={() => document.getElementById('more-info')?.scrollIntoView({ behavior: 'smooth' })}
-                className="px-8 py-4 bg-white text-slate-700 border border-slate-200 rounded-xl font-bold text-lg hover:border-slate-300 hover:shadow-lg transition-all duration-300">
-                ศึกษาข้อมูลเพิ่มเติม
-              </button>
-            </div>
-          </motion.div>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <button
+                  onClick={() => setOpen(true)}
+                  className="px-8 py-4 bg-[#ff2500] text-white rounded-xl font-bold text-lg shadow-xl shadow-[#ff2500]/30 hover:bg-[#cc1e00] hover:scale-105 transition-all duration-300 transform"
+                >
+                  สมัครเป็นพาร์ทเนอร์
+                </button>
+                <button 
+                  onClick={() => document.getElementById('more-info')?.scrollIntoView({ behavior: 'smooth' })}
+                  className="px-8 py-4 bg-white/20 backdrop-blur-sm text-white border border-white/30 rounded-xl font-bold text-lg hover:bg-white/30 hover:shadow-lg transition-all duration-300">
+                  ศึกษาข้อมูลเพิ่มเติม
+                </button>
+              </div>
+            </motion.div>
+          </div>
         </div>
       </div>
 
-      <div id="more-info" className="max-w-6xl mx-auto px-6">
+      <div id="more-info" className="max-w-6xl mx-auto px-6 relative z-20 -mt-10">
 
         {/* STATS STRIP */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="grid grid-cols-2 md:grid-cols-4 gap-8 bg-white p-10 rounded-3xl border border-slate-100 shadow-xl shadow-slate-200/50 mb-24 divide-x divide-slate-100 text-center"
+          className="grid grid-cols-2 md:grid-cols-4 gap-8 bg-white p-10 rounded-3xl border border-slate-100 shadow-2xl shadow-slate-300/50 mb-24 divide-x divide-slate-100 text-center"
         >
           {[
             { val: "20+", label: "พาร์ทเนอร์ในระบบ" },

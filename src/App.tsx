@@ -1,5 +1,5 @@
 import { Suspense, lazy } from "react";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import ScrollToTop from "./components/ScrollToTop";
 import { Toaster } from "./components/ui/toaster";
@@ -17,11 +17,13 @@ const BlogPage = lazy(() => import("./pages/BlogPage"));
 const ProductClaimPage = lazy(() => import("./pages/ProductClaimPage"));
 
 function App() {
+  const location = useLocation();
+
   return (
     <>
       <Navbar />
       
-      <Suspense fallback={
+      <Suspense key={location.pathname} fallback={
         <div className="flex items-center justify-center h-screen">
           <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-red-500"></div>
         </div>

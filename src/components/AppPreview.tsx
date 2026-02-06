@@ -15,6 +15,13 @@ import phone4 from "../assets/phones/phone-4.png";
 
 const phones = [phone1, phone2, phone3, phone4];
 
+const bgImages = [
+  "/homepage-bg22.png",
+  "/homepage-bg33.png",
+  "/homepage-bg44.png",
+  "/homepage-bg55.png",
+];
+
 const slideThemes = [
   { bubble: "bg-red-300/70", wave: "#fca5a5", glow: "bg-red-500", accent: "#ff2500" },
   { bubble: "bg-blue-300/70", wave: "#93c5fd", glow: "bg-blue-500", accent: "#3b82f6" },
@@ -140,8 +147,7 @@ const Bubble = ({
 
 const AppPreview = () => {
   const [[current, direction], setCurrent] = useState<[number, number]>([0, 0]);
-
-
+  const [bgIndex, setBgIndex] = useState(0);
 
   const paginate = (newDirection: number) => {
     setCurrent(([prev]) => [
@@ -150,14 +156,48 @@ const AppPreview = () => {
     ]);
   };
 
-    useEffect(() => {
-      const timer = setInterval(() => paginate(1), 3200);
-      return () => clearInterval(timer);
-    }, [current]);
+  useEffect(() => {
+    const timer = setInterval(() => paginate(1), 3200);
+    return () => clearInterval(timer);
+  }, [current]);
+
+  // Background crossfade every 10 seconds
+  useEffect(() => {
+    const bgTimer = setInterval(() => {
+      setBgIndex((prev) => (prev + 1) % bgImages.length);
+    }, 10000);
+    return () => clearInterval(bgTimer);
+  }, []);
 
 
   return (
     <section className="relative py-10 overflow-hidden bg-transparent">
+      {/* Crossfade Background Images - สลับทุก 10 วินาที */}
+      <AnimatePresence mode="sync">
+        <motion.div
+          key={bgIndex}
+          className="absolute inset-0 -z-10"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 0.8 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 2, ease: "easeInOut" }}
+          style={{
+            backgroundImage: `url('${bgImages[bgIndex]}')`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+          }}
+        />
+      </AnimatePresence>
+      {/* Gradient Fade + Blur - ด้านบนขาวเบลอจางๆ */}
+      <div 
+        className="absolute inset-x-0 top-0 h-[150px] -z-10 pointer-events-none backdrop-blur-sm"
+        style={{
+          background: 'linear-gradient(to bottom, rgba(255,255,255,1) 0%, rgba(255,255,255,0.8) 20%, rgba(255,255,255,0) 100%)',
+          maskImage: 'linear-gradient(to bottom, black 0%, black 20%, transparent 100%)',
+          WebkitMaskImage: 'linear-gradient(to bottom, black 0%, black 20%, transparent 90%)',
+        }}
+      />
+      
       <WaterWaves color={slideThemes[current].wave} />
 
       {/* 🫧 Bubbles */}
@@ -176,7 +216,7 @@ const AppPreview = () => {
         <h1 className="text-3xl md:text-4xl font-bold text-[#FF3333] mb-4">
           SENd Service
         </h1>
-        <p className="text-gray-600 max-w-[520px] mx-auto">
+        <p className="text-white max-w-[520px] mx-auto" style={{textShadow: '1px 1px 2px rgba(0,0,0,0.8), -1px -1px 2px rgba(0,0,0,0.8)'}}>
           บริการรับ–ส่งซักอบผ้า ที่ออกแบบมาเพื่อความสะดวกในทุกไลฟ์สไตล์
         </p>
       </div>
@@ -229,10 +269,10 @@ const AppPreview = () => {
             transition={{ duration: 0.4 }}
             className="absolute inset-0 flex flex-col items-center justify-center"
           >
-            <h3 className="text-xl font-semibold mb-1">
+            <h3 className="text-white text-xl font-semibold mb-1">
               {slideTexts[current].title}
             </h3>
-            <p className="text-gray-600 text-sm max-w-[420px]">
+            <p className="text-white text-sm max-w-[420px]">
               {slideTexts[current].desc}
             </p>
           </motion.div>

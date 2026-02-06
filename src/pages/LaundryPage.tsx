@@ -1,8 +1,11 @@
 import { useState, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup, useMapEvents, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
+
+// Hero background image
+import laundryHeroBg from "../assets/bg/bg-maps.png";
 
 // Fix for default marker icon
 import icon from "leaflet/dist/images/marker-icon.png";
@@ -78,7 +81,21 @@ export interface Store {
   lat: number;
   lng: number;
   isCombo?: boolean;
+  province: "sisaket" | "ubon"; // จังหวัด
+  district?: "mueang" | "warin"; // อำเภอ (สำหรับอุบลฯ)
 }
+
+// Province configuration
+const provinces = {
+  sisaket: { name: "ศรีสะเกษ", center: [15.115, 104.33] as [number, number] },
+  ubon: { name: "อุบลราชธานี", center: [15.2287, 104.8567] as [number, number] },
+};
+
+// District configuration (สำหรับอุบลราชธานี)
+const districts = {
+  mueang: { name: "อำเภอเมืองอุบล", center: [15.2287, 104.8567] as [number, number] },
+  warin: { name: "อำเภอวารินชำราบ", center: [15.1650, 104.8600] as [number, number] },
+};
 
 /* =========================
    MOCK DATA
@@ -91,6 +108,13 @@ import washenjoyLogo from "../assets/logos/washenjoy2.png";
 import washmeticLogo from "../assets/logos/washmetic2.png";
 import duckwashLogo from "../assets/logos/duckwash2.png";
 import websiteLogo from "../assets/logos/send-logo2.png";
+import washxpressLogo from "../assets/logos/washxpress2.png";
+import codecleanLogo from "../assets/logos/codeclean2.png";
+import enjoywashdryLogo from "../assets/logos/enjoywashdry2.png";
+import matilaLogo from "../assets/logos/matila2.png";
+import brownywashdryLogo from "../assets/logos/brownywashdry2.png";
+import teruteruLogo from "../assets/logos/teruteru2.png";
+import pugguLogo from "../assets/logos/puggu2.png";
 
 import otteriBranch1Img from "../assets/stores/otteriUturn.png";      // สาขา ปตท.แยกยูเทิน
 import otteriBranch2Img from "../assets/stores/otteriubon.png"; // สาขา ถนนศรีสะเกษ-อุบล
@@ -104,7 +128,11 @@ import washenjoyImg from "../assets/stores/washenjoy.png";
 import washmeticImg from "../assets/stores/washmetic.png";
 import duckwashImg from "../assets/stores/duckwash.png";
 
+// Placeholder image for stores without images yet
+const placeholderImg = "https://images.unsplash.com/photo-1545173168-9f1947eebb8f?q=80&w=400&auto=format&fit=crop";
+
 export const stores: Store[] = [
+  // ==================== ศรีสะเกษ ====================
   {
     id: "otteri-sisaket1",
     name: "Otteri สาขา ปตท.แยกยูเทิน ศรีสะเกษ",
@@ -115,7 +143,8 @@ export const stores: Store[] = [
     maxKg: 28,
     price: 40,
     lat: 15.11237,
-    lng: 104.34728
+    lng: 104.34728,
+    province: "sisaket"
   },
   {
     id: "otteri-sisaket2",
@@ -127,7 +156,8 @@ export const stores: Store[] = [
     maxKg: 18,
     price: 40,
     lat: 15.11403,
-    lng: 104.33741
+    lng: 104.33741,
+    province: "sisaket"
   },
   {
     id: "otteri-sisaket3",
@@ -139,7 +169,8 @@ export const stores: Store[] = [
     maxKg: 28,
     price: 40,
     lat: 15.10394,
-    lng: 104.32714
+    lng: 104.32714,
+    province: "sisaket"
   },
   {
     id: "otteri-sisaket4",
@@ -151,7 +182,8 @@ export const stores: Store[] = [
     maxKg: 28,
     price: 40,
     lat: 15.08757,
-    lng: 104.34321
+    lng: 104.34321,
+    province: "sisaket"
   },
   {
     id: "laundrybar-sisaket",
@@ -163,7 +195,8 @@ export const stores: Store[] = [
     maxKg: 20,
     price: 40,
     lat: 15.11951, 
-    lng: 104.32659
+    lng: 104.32659,
+    province: "sisaket"
   },
   {
     id: "kirei-sisaket",
@@ -175,7 +208,8 @@ export const stores: Store[] = [
     maxKg: 28,
     price: 30,
     lat: 15.11608, 
-    lng: 104.33670
+    lng: 104.33670,
+    province: "sisaket"
   },
   {
     id: "maru-sisaket",
@@ -188,7 +222,8 @@ export const stores: Store[] = [
     price: 100,
     lat: 15.10525,
     lng: 104.32007,
-    isCombo: true
+    isCombo: true,
+    province: "sisaket"
   },
   {
     id: "washenjoy-sisaket",
@@ -200,7 +235,8 @@ export const stores: Store[] = [
     maxKg: 28,
     price: 40,
     lat: 15.11895,
-    lng: 104.33339
+    lng: 104.33339,
+    province: "sisaket"
   },
   {
     id: "washmetic-sisaket",
@@ -212,7 +248,8 @@ export const stores: Store[] = [
     maxKg: 28,
     price: 40,
     lat: 15.12111,
-    lng: 104.32920
+    lng: 104.32920,
+    province: "sisaket"
   },
   {
     id: "duckwash-sisaket",
@@ -224,7 +261,598 @@ export const stores: Store[] = [
     maxKg: 20,
     price: 40,
     lat: 15.12199,
-    lng: 104.30843
+    lng: 104.30843,
+    province: "sisaket"
+  },
+
+  // ==================== อุบลราชธานี - เมืองอุบล ====================
+  // LaundryBar
+  { 
+    id: "laundrybar-ubonBranch1", 
+    name: "LaundryBar สวนวนารมย์", 
+    logo: laundrybarLogo, 
+    image: placeholderImg, 
+    washers: 0, 
+    dryers: 0, 
+    maxKg: 0, 
+    price: 0, 
+    lat: 15.27704, 
+    lng: 104.85283, 
+    province: "ubon",
+    district: "mueang"
+  },
+  { 
+    id: "laundrybar-ubonBranch2", 
+    name: "LaundryBar สุขาอุปถัมภ์", 
+    logo: laundrybarLogo, 
+    image: placeholderImg, 
+    washers: 0, 
+    dryers: 0, 
+    maxKg: 0, 
+    price: 0, 
+    lat: 15.25120, 
+    lng: 104.83760,
+    province: "ubon",
+    district: "mueang"
+  },
+  { 
+    id: "laundrybar-ubonBranch3", 
+    name: "LaundryBar ห้วยวังนอง", 
+    logo: laundrybarLogo, 
+    image: placeholderImg, 
+    washers: 0, 
+    dryers: 0, 
+    maxKg: 0, 
+    price: 0, 
+    lat: 15.24280, 
+    lng: 104.88967, 
+    province: "ubon",
+    district: "mueang"
+  },
+
+  // WashXpress
+  {
+    id: "washxpress-ubonBranch1",
+    name: "WashXpress PT ดอนกลาง",
+    logo: washxpressLogo,
+    image: placeholderImg,
+    washers: 0,
+    dryers: 0,
+    maxKg: 0,
+    price: 0,
+    lat: 15.28883,
+    lng: 104.83759,
+    province: "ubon",
+    district: "mueang"
+  },
+  {
+    id: "washxpress-ubonBranch2",
+    name: "WashXpress ถนนคลังอาวุธ",
+    logo: washxpressLogo,
+    image: placeholderImg,
+    washers: 0,
+    dryers: 0,
+    maxKg: 0,
+    price: 0,
+    lat: 15.28095,
+    lng: 104.8750,
+    province: "ubon",
+    district: "mueang"
+  },
+  {
+    id: "washxpress-ubonBranch3",
+    name: "WashXpress ถนนทุ่งหลวง",
+    logo: washxpressLogo,
+    image: placeholderImg,
+    washers: 0,
+    dryers: 0,
+    maxKg: 0,
+    price: 0,
+    lat: 15.28643,
+    lng: 104.86142,
+    province: "ubon",
+    district: "mueang"
+  },
+  {
+    id: "washxpress-ubonBranch4",
+    name: "WashXpress ซอยชยางกูร40",
+    logo: washxpressLogo,
+    image: placeholderImg,
+    washers: 0,
+    dryers: 0,
+    maxKg: 0,
+    price: 0,
+    lat: 15.27152,
+    lng: 104.84868,
+    province: "ubon",
+    district: "mueang"
+  },
+  {
+    id: "washxpress-ubonBranch5",
+    name: "WashXpress ถนนธรรมวิถี",
+    logo: washxpressLogo,
+    image: placeholderImg,
+    washers: 0,
+    dryers: 0,
+    maxKg: 0,
+    price: 0,
+    lat: 15.26210,
+    lng: 104.83640,
+    province: "ubon",
+    district: "mueang"
+  },
+  {
+    id: "washexpress-ubonBranch6",
+    name: "WashXpress ตลาดสันติสุข 2",
+    logo: washxpressLogo,
+    image: placeholderImg,
+    washers: 0,
+    dryers: 0,
+    maxKg: 0,
+    price: 0,
+    lat: 15.29596,
+    lng: 104.89030,
+    province: "ubon",
+    district: "mueang"
+  },
+  {
+    id: "washxpress-ubonBranch7",
+    name: "WashXpress อุบล-ตระการ 7",
+    logo: washxpressLogo,
+    image: placeholderImg,
+    washers: 0,
+    dryers: 0,
+    maxKg: 0,
+    price: 0,
+    lat: 15.24956,
+    lng: 104.87693,
+    province: "ubon",
+    district: "mueang"
+  },
+  {
+    id: "washxpress-ubonBranch8",
+    name: "WashXpress ห้วยวังนอง",
+    logo: washxpressLogo,
+    image: placeholderImg,
+    washers: 0,
+    dryers: 0,
+    maxKg: 0,
+    price: 0,
+    lat: 15.24956,
+    lng: 104.87693,
+    province: "ubon",
+    district: "mueang"
+  },
+  {
+    id: "washxpress-ubonBranch9",
+    name: "WashXpress สุริยาตย์20",
+    logo: washxpressLogo,
+    image: placeholderImg,
+    washers: 0,
+    dryers: 0,
+    maxKg: 0,
+    price: 0,
+    lat: 15.23953,
+    lng: 104.85682,
+    province: "ubon",
+    district: "mueang"
+  },
+  {
+    id: "washxpress-ubonBranch10",
+    name: "WashXpress ถนนจงกลนิธารณ์",
+    logo: washxpressLogo,
+    image: placeholderImg,
+    washers: 0,
+    dryers: 0,
+    maxKg: 0,
+    price: 0,
+    lat: 15.22913,
+    lng: 104.85181,
+    province: "ubon",
+    district: "mueang"
+  },
+
+  //Otteri
+  {
+    id: "otteri-ubonBranch1",
+    name: "Otteri สาขา ถนนคลังอาวุธ",
+    logo: otteriLogo,
+    image: placeholderImg,
+    washers: 0,
+    dryers: 0,
+    maxKg: 0,
+    price: 0,
+    lat: 15.28211,
+    lng: 104.83597,
+    province: "ubon",
+    district: "mueang"
+  },
+  {
+    id: "otteri-ubonBranch2",
+    name: "Otteri สาขา ชยางกูร42",
+    logo: otteriLogo,
+    image: placeholderImg,
+    washers: 0,
+    dryers: 0,
+    maxKg: 0,
+    price: 0,
+    lat: 15.27160,
+    lng: 104.85365,
+    province: "ubon",
+    district: "mueang"
+  },
+  {
+    id: "otteri-ubonBranch3",
+    name: "Otteri สาขา ตลาดหนองบัว",
+    logo: otteriLogo,
+    image: placeholderImg,
+    washers: 0,
+    dryers: 0,
+    maxKg: 0,
+    price: 0,
+    lat: 15.26235,
+    lng: 104.84358,
+    province: "ubon",
+    district: "mueang"
+  },
+  {
+    id: "otteri-ubonBranch4",
+    name: "Otteri สาขา ชยางกูร14",
+    logo: otteriLogo,
+    image: placeholderImg,
+    washers: 0,
+    dryers: 0,
+    maxKg: 0,
+    price: 0,
+    lat: 15.25721,
+    lng: 104.85128,
+    province: "ubon",
+    district: "mueang"
+  },
+  {
+    id: "otteri-ubonBranch5",
+    name: "Otteri สาขา สุขาอุปถัมภ์",
+    logo: otteriLogo,
+    image: placeholderImg,
+    washers: 0,
+    dryers: 0,
+    maxKg: 0,
+    price: 0,
+    lat: 15.25304,
+    lng: 104.83269,
+    province: "ubon",
+    district: "mueang"
+  },
+  {
+    id: "otteri-ubonBranch6",
+    name: "Otteri สาขา รร.เบ็ญจะมะมหาราช",
+    logo: otteriLogo,
+    image: placeholderImg,
+    washers: 0,
+    dryers: 0,
+    maxKg: 0,
+    price: 0,
+    lat: 15.23743,
+    lng: 104.84068,
+    province: "ubon",
+    district: "mueang"
+  },
+  {
+    id: "otteri-ubonBranch7",
+    name: "Otteri สาขา ถนนผาแดง",
+    logo: otteriLogo,
+    image: placeholderImg,
+    washers: 0,
+    dryers: 0,
+    maxKg: 0,
+    price: 0,
+    lat: 15.23526,
+    lng: 104.85757,
+    province: "ubon",
+    district: "mueang"
+  },
+  {
+    id: "otteri-ubonBranch8",
+    name: "Otteri สาขา ถนนศรีณรงค์",
+    logo: otteriLogo,
+    image: placeholderImg,
+    washers: 0,
+    dryers: 0,
+    maxKg: 0,
+    price: 0,
+    lat: 15.23526,
+    lng: 104.85759,
+    province: "ubon",
+    district: "mueang"
+  },
+  {
+    id: "otteri-ubonBranch9",
+    name: "Otteri สาขา ปตท.หัวสนามบิน",
+    logo: otteriLogo,
+    image: placeholderImg,
+    washers: 0,
+    dryers: 0,
+    maxKg: 0,
+    price: 0,
+    lat: 15.25171,
+    lng: 104.88030,
+    province: "ubon",
+    district: "mueang"
+  },
+
+  //CodeClean
+  {
+    id: "codeclean-ubonBranch1",
+    name: "CodeClean สาขา มอเตอร์ไบค์",
+    logo: codecleanLogo,
+    image: placeholderImg,
+    washers: 0,
+    dryers: 0,
+    maxKg: 0,
+    price: 0,
+    lat: 15.27254,
+    lng: 104.85392,
+    province: "ubon",
+    district: "mueang"
+  },
+  {
+    id: "codeclean-ubonBranch2",
+    name: "CodeClean สาขา โปลิเทคนิคอุบล",
+    logo: codecleanLogo,
+    image: placeholderImg,
+    washers: 0,
+    dryers: 0,
+    maxKg: 0,
+    price: 0,
+    lat: 15.26481,
+    lng: 104.84516,
+    province: "ubon",
+    district: "mueang"
+  },
+  {
+    id: "codeclean-ubonBranch3",
+    name: "CodeClean สาขา ซอยแจ้งสนิท 3",
+    logo: codecleanLogo,
+    image: placeholderImg,
+    washers: 0,
+    dryers: 0,
+    maxKg: 0,
+    price: 0,
+    lat: 15.24842,
+    lng: 104.84119,
+    province: "ubon",
+    district: "mueang"
+  },
+  {
+    id: "codeclean-ubonBranch4",
+    name: "CodeClean สาขา ปตท.บูรพาใน",
+    logo: codecleanLogo,
+    image: placeholderImg,
+    washers: 0,
+    dryers: 0,
+    maxKg: 0,
+    price: 0,
+    lat: 15.22914,
+    lng: 104.87203,
+    province: "ubon",
+    district: "mueang"
+  },
+
+  //WASHENJOY
+  {
+    id: "washenjoy-ubonBranch1",
+    name: "Washenjoy สาขา ข้างรพ.อุบลรักษ์",
+    logo: washenjoyLogo,
+    image: placeholderImg,
+    washers: 0,
+    dryers: 0,
+    maxKg: 0,
+    price: 0,
+    lat: 15.23165,
+    lng: 104.87097,
+    province: "ubon",
+    district: "mueang"
+  },
+
+  //Browny Wash&Dry
+  {
+    id: "brownywashdry-ubonBranch1",
+    name: "Browny Wash&Dry สาขา รพ.สรรพสิทธิ์",
+    logo: brownywashdryLogo,
+    image: placeholderImg,
+    washers: 0,
+    dryers: 0,
+    maxKg: 0,
+    price: 0,
+    lat: 15.23596,
+    lng: 104.86879,
+    province: "ubon",
+    district: "mueang"
+  },
+
+  //Enjoy Wash&Dry
+  {
+    id: "enjoywashdry-ubonBranch1",
+    name: "Enjoy Wash&Dry สาขา ถนนแจ้งสนิท",
+    logo: enjoywashdryLogo,
+    image: placeholderImg,
+    washers: 0,
+    dryers: 0,
+    maxKg: 0,
+    price: 0,
+    lat: 15.25397,
+    lng: 104.83577,
+    province: "ubon",
+    district: "mueang"
+  },
+
+  //Matila Wash&Dry
+  {
+    id: "matila-ubonBranch1",
+    name: "Matila Wash&Dry สาขา ถนนแจ้งสนิท",
+    logo: matilaLogo,
+    image: placeholderImg,
+    washers: 0,
+    dryers: 0,
+    maxKg: 0,
+    price: 0,
+    lat: 15.25397,
+    lng: 104.83577,
+    province: "ubon",
+    district: "mueang"
+  },
+
+  //===============วารินชำราบ===============
+  //LaundryBar
+  {
+    id: "laundrybar-warinBranch1",
+    name: "LaundryBar สาขา ถนนกันทรลักษ์-วาริน",
+    logo: laundrybarLogo,
+    image: placeholderImg,
+    washers: 0,
+    dryers: 0,
+    maxKg: 0,
+    price: 0,
+    lat: 15.19555,
+    lng: 104.86169,
+    province: "ubon",
+    district: "warin"
+  },
+  
+  //WashXpress
+  {
+    id: "washxpress-warinBranch1",
+    name: "WashXpress สาขา ตลาดวาริน",
+    logo: washxpressLogo,
+    image: placeholderImg,
+    washers: 0,
+    dryers: 0,
+    maxKg: 0,
+    price: 0,
+    lat: 15.19665,
+    lng: 104.86542,
+    province: "ubon",
+    district: "warin"
+  },
+  {
+    id: "washxpress-warinBranch2",
+    name: "WashXpress สาขา บ้านแขม",
+    logo: washxpressLogo,
+    image: placeholderImg,
+    washers: 0,
+    dryers: 0,
+    maxKg: 0,
+    price: 0,
+    lat: 15.11107,
+    lng: 104.89447,
+    province: "ubon",
+    district: "warin"
+  },
+  {
+    id: "washxpress-warinBranch3",
+    name: "WashXpress สาขา บ้านศรีไค",
+    logo: washxpressLogo,
+    image: placeholderImg,
+    washers: 0,
+    dryers: 0,
+    maxKg: 0,
+    price: 0,
+    lat: 15.10853,
+    lng: 104.90442,
+    province: "ubon",
+    district: "warin"
+  },
+
+  //Otteri
+  {
+    id: "otteri-warinBranch1",
+    name: "Otteri สาขา หน้ารพ.วาริน",
+    logo: otteriLogo,
+    image: placeholderImg,
+    washers: 0,
+    dryers: 0,
+    maxKg: 0,
+    price: 0,
+    lat: 15.19449,
+    lng: 104.83828,
+    province: "ubon",
+    district: "warin"
+  },
+  {
+    id: "otteri-warinBranch2",
+    name: "Otteri สาขา เซฟแลนด์วารินชำราบ",
+    logo: otteriLogo,
+    image: placeholderImg,
+    washers: 0,
+    dryers: 0,
+    maxKg: 0,
+    price: 0,
+    lat: 15.19596,
+    lng: 104.86182,
+    province: "ubon",
+    district: "warin"
+  },
+
+  //CodeClean
+  {
+    id: "codeclean-warinBranch1",
+    name: "CodeClean สาขา หน้ามอ อุบล",
+    logo: codecleanLogo,
+    image: placeholderImg,
+    washers: 0,
+    dryers: 0,
+    maxKg: 0,
+    price: 0,
+    lat: 15.11213,
+    lng: 104.90042,
+    province: "ubon",
+    district: "warin"
+  },
+  {
+    id: "codeclean-warinBranch2",
+    name: "CodeClean สาขา สุะพานดำวารินชำราบ",
+    logo: codecleanLogo,
+    image: placeholderImg,
+    washers: 0,
+    dryers: 0,
+    maxKg: 0,
+    price: 0,
+    lat: 15.19665,
+    lng: 104.85460,
+    province: "ubon",
+    district: "warin"
+  },
+
+  //TERU TERU Wash&Dry
+  {
+    id: "teruteru-warinBranch1",
+    name: "TERU TERU Wash&Dry สาขา วารินชำราบ",
+    logo: teruteruLogo,
+    image: placeholderImg,
+    washers: 0,
+    dryers: 0,
+    maxKg: 0,
+    price: 0,
+    lat: 15.16046,
+    lng: 104.85452,
+    province: "ubon",
+    district: "warin"
+  },
+
+  //Puggu
+  {
+    id: "puggu-warinBranch1",
+    name: "Puggu สาขา ตลาดแม่กิมเตียง",
+    logo: pugguLogo,
+    image: placeholderImg,
+    washers: 0,
+    dryers: 0,
+    maxKg: 0,
+    price: 0,
+    lat: 15.18440,
+    lng: 104.85868,
+    province: "ubon",
+    district: "warin"
   },
 ];
 
@@ -288,10 +916,21 @@ function LocationMarker() {
   );
 }
 
+// Map View Controller - changes map center when province changes
+function ChangeView({ center, zoom }: { center: [number, number]; zoom: number }) {
+  const map = useMap();
+  useEffect(() => {
+    map.flyTo(center, zoom);
+  }, [center, zoom, map]);
+  return null;
+}
+
 const LaundryPage: React.FC = () => {
   const [kg, setKg] = useState<number | "">("");
   const [price, setPrice] = useState<number | "">("");
   const [selectedStore, setSelectedStore] = useState<Store | null>(null);
+  const [selectedProvince, setSelectedProvince] = useState<"all" | "sisaket" | "ubon">("all");
+  const [selectedDistrict, setSelectedDistrict] = useState<"all" | "mueang" | "warin">("all");
 
   useEffect(() => {
     if (!selectedStore) return;
@@ -302,113 +941,253 @@ const LaundryPage: React.FC = () => {
     return () => window.removeEventListener("keydown", handleEsc);
   }, [selectedStore]);
 
+  // Reset district when province changes
+  useEffect(() => {
+    if (selectedProvince !== "ubon") {
+      setSelectedDistrict("all");
+    }
+  }, [selectedProvince]);
+
+  // Get map center based on selected province and district
+  const getMapCenter = (): [number, number] => {
+    if (selectedProvince === "sisaket") {
+      return provinces.sisaket.center;
+    }
+    if (selectedProvince === "ubon") {
+      if (selectedDistrict === "mueang") return districts.mueang.center;
+      if (selectedDistrict === "warin") return districts.warin.center;
+      return provinces.ubon.center;
+    }
+    return [15.17, 104.59] as [number, number]; // Center between both provinces
+  };
+
+  const mapCenter = getMapCenter();
+  const mapZoom = selectedProvince === "all" ? 10 : selectedDistrict !== "all" ? 14 : 13;
+
   const filteredStores = stores.filter(
     (store) =>
+      (selectedProvince === "all" || store.province === selectedProvince) &&
+      (selectedProvince !== "ubon" || selectedDistrict === "all" || store.district === selectedDistrict) &&
       (kg === "" || store.maxKg >= kg) &&
       (price === "" || store.price <= price)
   );
 
   return (
-    <section className="min-h-screen bg-[#F8F9FB] text-slate-900 pb-20 pt-20">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="min-h-screen bg-[#F8F9FB] text-slate-900 pb-20 relative">
 
-        {/* HEADER SECTION */}
-        <div className="mb-12">
+      {/* HERO BACKGROUND IMAGE - extends to half of search bar */}
+      <div className="absolute inset-x-0 top-0 h-[750px] overflow-hidden">
+        {/* Background Image */}
+        <div 
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{
+            backgroundImage: `url(${laundryHeroBg})`
+          }}
+        />
+        {/* Dark Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/50 to-black/70" />
+        {/* Bottom fade to match page background */}
+        <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-[#F8F9FB] to-transparent" />
+      </div>
+
+      {/* CONTENT WITH Z-INDEX */}
+      <div className="relative z-10">
+        <div className="pt-20 pb-8">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            {/* HEADER SECTION */}
+            <div className="mb-8 text-center">
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6 }}
+                className="max-w-2xl mx-auto"
+              >
+                <h1 className="text-4xl md:text-5xl font-extrabold text-white mb-4 tracking-tight drop-shadow-lg">
+                  ค้นหา<span className="text-transparent bg-clip-text bg-gradient-to-r from-[#ff6b4a] to-[#ffb347]">ร้านสะดวกซัก</span>
+                </h1>
+                <p className="text-lg text-white/90 drop-shadow">
+                  สะดวก ใกล้คุณ สะอาด รวดเร็ว พร้อมให้บริการตลอด 24 ชม.
+                </p>
+              </motion.div>
+            </div>
+          </div>
+        </div>
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+          {/* MAP SECTION */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.2, duration: 0.6 }}
+            className="mb-8 rounded-3xl overflow-hidden shadow-xl border border-slate-200 h-[400px] relative"
+          >
+            <MapContainer center={mapCenter} zoom={mapZoom} scrollWheelZoom={true} className="h-full w-full">
+              <ChangeView center={mapCenter} zoom={mapZoom} />
+              <TileLayer
+                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+              />
+              {stores.map((store) => (
+                <Marker key={store.id} position={[store.lat, store.lng]} icon={createStoreIcon(websiteLogo)}>
+                  <Popup>
+                    <div className="font-sans min-w-[200px]">
+                      <h3 className="font-bold text-sm mb-1">{store.name}</h3>
+                      <div className="flex items-center gap-2 text-xs text-slate-500 mb-2">
+                        <span>💧 {store.washers} เครื่อง</span>
+                        <span>🔥 {store.dryers} เครื่อง</span>
+                      </div>
+                      <a 
+                        href={`https://www.google.com/maps/dir/?api=1&destination=${store.lat},${store.lng}`}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="block w-full text-center bg-red-500 !text-white text-xs font-bold py-1.5 rounded-lg hover:bg-red-600"
+                      >
+                        นำทาง
+                      </a>
+                    </div>
+                  </Popup>
+                </Marker>
+              ))}
+              <LocationMarker />
+            </MapContainer>
+          </motion.div>
+
+          {/* PROVINCE & DISTRICT FILTER */}
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="text-center max-w-2xl mx-auto"
+            transition={{ delay: 0.15, duration: 0.5 }}
+            className="flex flex-col items-center gap-3 mb-6"
           >
-            <h1 className="text-4xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-[#ff2500] to-[#fe3d00] mb-4 tracking-tight">
-              ค้นหาร้านสะดวกซัก
-            </h1>
-            <p className="text-lg text-slate-600">
-              สะดวก ใกล้คุณ สะอาด รวดเร็ว พร้อมให้บริการตลอด 24 ชม.
-            </p>
-          </motion.div>
-        </div>
+            {/* Row 1: Province Filter */}
+            <div className="flex flex-col sm:flex-row items-center gap-2">
+              <span className="text-sm font-semibold text-slate-500 hidden sm:block">จังหวัด:</span>
+              <div className="inline-flex items-center gap-1 p-1.5 bg-white rounded-2xl shadow-lg border border-slate-200">
+                <button
+                  onClick={() => setSelectedProvince("all")}
+                  className={`px-5 py-2.5 rounded-xl font-bold text-sm transition-all ${
+                    selectedProvince === "all"
+                      ? "bg-[#ff2500] text-white shadow-md"
+                      : "text-slate-600 hover:bg-slate-100"
+                  }`}
+                >
+                  🌍 ทั้งหมด
+                </button>
+                <button
+                  onClick={() => setSelectedProvince("sisaket")}
+                  className={`px-5 py-2.5 rounded-xl font-bold text-sm transition-all ${
+                    selectedProvince === "sisaket"
+                      ? "bg-[#ff2500] text-white shadow-md"
+                      : "text-slate-600 hover:bg-slate-100"
+                  }`}
+                >
+                  📍 ศรีสะเกษ
+                </button>
+                <button
+                  onClick={() => setSelectedProvince("ubon")}
+                  className={`px-5 py-2.5 rounded-xl font-bold text-sm transition-all ${
+                    selectedProvince === "ubon"
+                      ? "bg-[#ff2500] text-white shadow-md"
+                      : "text-slate-600 hover:bg-slate-100"
+                  }`}
+                >
+                  📍 อุบลราชธานี
+                </button>
+              </div>
+            </div>
 
-        {/* MAP SECTION */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.2, duration: 0.6 }}
-          className="mb-12 rounded-3xl overflow-hidden shadow-xl border border-slate-200 h-[400px] relative z-0"
-        >
-          <MapContainer center={[15.115, 104.33]} zoom={13} scrollWheelZoom={false} className="h-full w-full">
-            <TileLayer
-              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            />
-            {stores.map((store) => (
-              <Marker key={store.id} position={[store.lat, store.lng]} icon={createStoreIcon(websiteLogo)}>
-                <Popup>
-                  <div className="font-sans min-w-[200px]">
-                    <h3 className="font-bold text-sm mb-1">{store.name}</h3>
-                    <div className="flex items-center gap-2 text-xs text-slate-500 mb-2">
-                      <span>💧 {store.washers} เครื่อง</span>
-                      <span>🔥 {store.dryers} เครื่อง</span>
-                    </div>
-                    <a 
-                      href={`https://www.google.com/maps/dir/?api=1&destination=${store.lat},${store.lng}`}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="block w-full text-center bg-red-500 !text-white text-xs font-bold py-1.5 rounded-lg hover:bg-red-600"
+            {/* Row 2: District Filter (shows only when Ubon is selected) */}
+            <AnimatePresence>
+              {selectedProvince === "ubon" && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10, height: 0 }}
+                  animate={{ opacity: 1, y: 0, height: "auto" }}
+                  exit={{ opacity: 0, y: -10, height: 0 }}
+                  transition={{ duration: 0.3, ease: "easeInOut" }}
+                  className="flex flex-col sm:flex-row items-center gap-2 overflow-hidden"
+                >
+                  <span className="text-sm font-semibold text-slate-500 hidden sm:block">อำเภอ:</span>
+                  <div className="inline-flex items-center gap-1 p-1.5 bg-gradient-to-r from-orange-50 to-amber-50 rounded-2xl shadow-md border border-orange-200/50">
+                    <button
+                      onClick={() => setSelectedDistrict("all")}
+                      className={`px-4 py-2 rounded-xl font-bold text-sm transition-all ${
+                        selectedDistrict === "all"
+                          ? "bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-md"
+                          : "text-slate-600 hover:bg-white/80"
+                      }`}
                     >
-                      นำทาง
-                    </a>
+                      ทั้งหมด
+                    </button>
+                    <button
+                      onClick={() => setSelectedDistrict("mueang")}
+                      className={`px-4 py-2 rounded-xl font-bold text-sm transition-all ${
+                        selectedDistrict === "mueang"
+                          ? "bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-md"
+                          : "text-slate-600 hover:bg-white/80"
+                      }`}
+                    >
+                      🏙️ เมืองอุบล
+                    </button>
+                    <button
+                      onClick={() => setSelectedDistrict("warin")}
+                      className={`px-4 py-2 rounded-xl font-bold text-sm transition-all ${
+                        selectedDistrict === "warin"
+                          ? "bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-md"
+                          : "text-slate-600 hover:bg-white/80"
+                      }`}
+                    >
+                      🏘️ วารินชำราบ
+                    </button>
                   </div>
-                </Popup>
-              </Marker>
-            ))}
-            <LocationMarker />
-          </MapContainer>
-        </motion.div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </motion.div>
 
-        {/* SEARCH & FILTER BAR */}
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1, duration: 0.6 }}
-          className="flex flex-col md:flex-row gap-4 justify-center items-center mb-10 bg-white p-4 rounded-2xl shadow-sm border border-slate-100 max-w-4xl mx-auto"
-        >
-          <div className="flex items-center gap-3 w-full md:w-auto flex-1 bg-slate-50 px-4 py-3 rounded-xl border border-slate-200 focus-within:ring-2 focus-within:ring-[#ff2500]/20 transition-all">
-            <span className="text-xl">⚖️</span>
-            <div className="flex flex-col flex-1">
-              <label className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">ขนาดต่ำสุด</label>
-              <input
-                type="number"
-                min={0}
-                value={kg}
-                onChange={(e) => setKg(e.target.value === "" ? "" : Number(e.target.value))}
-                placeholder="ระบุ (KG)"
-                className="bg-transparent outline-none w-full text-sm font-medium placeholder-slate-400"
-              />
+          {/* SEARCH & FILTER BAR */}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1, duration: 0.6 }}
+            className="flex flex-col md:flex-row gap-4 justify-center items-center mb-6 bg-white/95 backdrop-blur-sm p-4 rounded-2xl shadow-xl border border-white/50 max-w-3xl mx-auto"
+          >
+            <div className="flex items-center gap-3 w-full md:w-auto flex-1 bg-slate-50 px-4 py-3 rounded-xl border border-slate-200 focus-within:ring-2 focus-within:ring-[#ff2500]/20 transition-all">
+              <span className="text-xl">⚖️</span>
+              <div className="flex flex-col flex-1">
+                <label className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">ขนาดต่ำสุด</label>
+                <input
+                  type="number"
+                  min={0}
+                  value={kg}
+                  onChange={(e) => setKg(e.target.value === "" ? "" : Number(e.target.value))}
+                  placeholder="ระบุ (KG)"
+                  className="bg-transparent outline-none w-full text-sm font-medium placeholder-slate-400"
+                />
+              </div>
             </div>
-          </div>
 
-          <div className="hidden md:block w-px h-10 bg-slate-200"></div>
+            <div className="hidden md:block w-px h-10 bg-slate-200"></div>
 
-          <div className="flex items-center gap-3 w-full md:w-auto flex-1 bg-slate-50 px-4 py-3 rounded-xl border border-slate-200 focus-within:ring-2 focus-within:ring-[#ff2500]/20 transition-all">
-            <span className="text-xl">฿</span>
-            <div className="flex flex-col flex-1">
-              <label className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">งบประมาณสูงสุด</label>
-              <input
-                type="number"
-                min={0}
-                value={price}
-                onChange={(e) => setPrice(e.target.value === "" ? "" : Number(e.target.value))}
-                placeholder="ราคา (บาท)"
-                className="bg-transparent outline-none w-full text-sm font-medium placeholder-slate-400"
-              />
+            <div className="flex items-center gap-3 w-full md:w-auto flex-1 bg-slate-50 px-4 py-3 rounded-xl border border-slate-200 focus-within:ring-2 focus-within:ring-[#ff2500]/20 transition-all">
+              <span className="text-xl">฿</span>
+              <div className="flex flex-col flex-1">
+                <label className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">งบประมาณสูงสุด</label>
+                <input
+                  type="number"
+                  min={0}
+                  value={price}
+                  onChange={(e) => setPrice(e.target.value === "" ? "" : Number(e.target.value))}
+                  placeholder="ราคา (บาท)"
+                  className="bg-transparent outline-none w-full text-sm font-medium placeholder-slate-400"
+                />
+              </div>
             </div>
-          </div>
 
-          <button className="w-full md:w-auto px-8 py-4 bg-[#ff2500] hover:bg-[#cc1e00] active:bg-[#a61900] text-white font-bold rounded-xl transition-colors shadow-lg shadow-[#ff2500]/20">
-            ค้นหาเลย
-          </button>
-        </motion.div>
+            <button className="w-full md:w-auto px-8 py-4 bg-[#ff2500] hover:bg-[#cc1e00] active:bg-[#a61900] text-white font-bold rounded-xl transition-colors shadow-lg shadow-[#ff2500]/20">
+              ค้นหาเลย
+            </button>
+          </motion.div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
 
@@ -529,6 +1308,7 @@ const LaundryPage: React.FC = () => {
             </div>
           </div>
         </div>
+      </div>
       </div>
 
       {/* MODAL & MAP OVERLAY */}

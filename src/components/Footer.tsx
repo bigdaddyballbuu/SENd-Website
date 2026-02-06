@@ -152,10 +152,10 @@ const Footer = () => {
           {/* LEGAL */}
           <div className="flex gap-6 text-white/90">
             <Link to="/privacy" className="hover:underline cursor-pointer">
-              Privacy Policy
+              นโยบายความเป็นส่วนตัว
             </Link>
             <Link to="/terms" className="hover:underline cursor-pointer">
-              Terms of Service
+              ข้อกำหนดในการให้บริการ
             </Link>
           </div>
         </div>
