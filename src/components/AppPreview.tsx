@@ -3,6 +3,7 @@ import {
   motion,
   AnimatePresence,
 } from "framer-motion";
+import { useTranslation } from "react-i18next";
 
 import phone1 from "../assets/phones/phone1.png";
 import phone2 from "../assets/phones/phone2.png";
@@ -28,27 +29,6 @@ const slideThemes = [
   { bubble: "bg-emerald-300/70", wave: "#6ee7b7", glow: "bg-emerald-500", accent: "#10b981" },
   { bubble: "bg-orange-300/70", wave: "#f5af53ff", glow: "bg-orange-500", accent: "#ff961e" },
 ];
-
-
-const slideTexts = [
-  {
-    title: "รับผ้าถึงบ้าน",
-    desc: "เรียกรถรับผ้าได้ทันที สะดวก รวดเร็ว ไม่ต้องออกจากบ้าน",
-  },
-  {
-    title: "ติดตามสถานะเรียลไทม์",
-    desc: "รู้ทุกขั้นตอน ตั้งแต่รับผ้า ซัก อบ จนถึงส่งคืน",
-  },
-  {
-    title: "เลือกร้านใกล้คุณ",
-    desc: "รวมร้านซักอบคุณภาพ เลือกได้ตามราคาและระยะทาง",
-  },
-  {
-    title: "ส่งคืนตรงเวลา",
-    desc: "ผ้าสะอาด หอม พร้อมใช้งาน ส่งตรงถึงมือคุณ",
-  },
-];
-
 
 
 /* =======================
@@ -148,6 +128,14 @@ const Bubble = ({
 const AppPreview = () => {
   const [[current, direction], setCurrent] = useState<[number, number]>([0, 0]);
   const [bgIndex, setBgIndex] = useState(0);
+  const { t } = useTranslation();
+
+  const slideTexts = [
+    { title: t('appPreview.slide1Title'), desc: t('appPreview.slide1Desc') },
+    { title: t('appPreview.slide2Title'), desc: t('appPreview.slide2Desc') },
+    { title: t('appPreview.slide3Title'), desc: t('appPreview.slide3Desc') },
+    { title: t('appPreview.slide4Title'), desc: t('appPreview.slide4Desc') },
+  ];
 
   const paginate = (newDirection: number) => {
     setCurrent(([prev]) => [
@@ -213,11 +201,11 @@ const AppPreview = () => {
 
       {/* Heading */}
       <div className="relative z-10 text-center mb-12 px-6">
-        <h1 className="text-3xl md:text-4xl font-bold text-[#FF3333] mb-4">
-          SENd Service
+        <h1 className="text-3xl md:text-4xl font-extrabold bg-gradient-to-r from-red-600 via-orange-500 to-red-600 bg-[length:200%_auto] bg-clip-text text-transparent animate-gradient mb-6">
+          {t('appPreview.title')}
         </h1>
-        <p className="text-white max-w-[520px] mx-auto" style={{textShadow: '1px 1px 2px rgba(0,0,0,0.8), -1px -1px 2px rgba(0,0,0,0.8)'}}>
-          บริการรับ–ส่งซักอบผ้า ที่ออกแบบมาเพื่อความสะดวกในทุกไลฟ์สไตล์
+        <p className="text-white max-w-[520px] mx-auto" style={{textShadow: '1px 1px 2px rgba(47, 47, 47, 0.8), -1px -1px 2px rgba(45, 45, 45, 0.8)'}}>
+          {t('appPreview.subtitle')}
         </p>
       </div>
 

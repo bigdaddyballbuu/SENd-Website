@@ -1,6 +1,9 @@
+import { useTranslation } from "react-i18next";
 import logo from "../assets/logos/SENd_Logo_1.png";
 
 const About = () => {
+  const { t } = useTranslation();
+
   return (
     <section className="py-16 bg-white transition-colors">
       <div className="max-w-[1000px] mx-auto px-6">
@@ -21,25 +24,20 @@ const About = () => {
           {/* TEXT */}
           <div className="flex-1 text-center md:text-left">
             <h1 className="text-md md:text-base font-bold tracking-[0.2em] text-red-500 mb-2">
-              เกี่ยวกับ SENd
+              {t('about.subtitle')}
             </h1>
 
             <h3 className="text-2xl md:text-3xl font-extrabold bg-gradient-to-r from-red-600 via-orange-500 to-red-600 bg-[length:200%_auto] bg-clip-text text-transparent animate-gradient mb-6">
-              SENd "เพิ่มเวลาความสุข ให้คุณมากขึ้น"
+              {t('about.title')}
             </h3>
 
             <div className="space-y-4 text-red-600 leading-relaxed font-light text-base md:text-lg">
               <p>
-                SENd คือแพลตฟอร์มที่เชื่อมต่อร้านสะดวกซักกับลูกค้าในประเทศไทย
-                เพื่อช่วยให้การดูแลเสื้อผ้าเป็นเรื่องง่าย สะดวก และเข้าถึงได้มากขึ้น
-                เราออกแบบระบบให้ใช้งานไม่ซับซ้อน พร้อมบริการรับ–ส่งเสื้อผ้า
-                ที่ช่วยประหยัดเวลาและตอบโจทย์ไลฟ์สไตล์ของคนไทยในชีวิตประจำวัน
+                {t('about.description1')}
               </p>
 
               <p>
-                SENd ให้ความสำคัญกับคุณภาพของบริการและประสบการณ์ของผู้ใช้งาน
-                ด้วยแนวคิดการพัฒนาแพลตฟอร์มที่เข้าใจทั้งลูกค้าและร้านค้า
-                เพื่อสร้างระบบที่เชื่อถือได้ ใช้งานง่าย และเติบโตไปพร้อมกับร้านสะดวกซักทั่วประเทศ
+                {t('about.description2')}
               </p>
             </div>
           </div>

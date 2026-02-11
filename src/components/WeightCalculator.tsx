@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import { useTranslation } from "react-i18next";
 import washerImg from "../assets/machines/washer4.jpg";
 
 /* ---------- ICONS (Simple SVGs) ---------- */
@@ -48,6 +49,7 @@ const WeightCalculator = () => {
   const [towels, setTowels] = useState(0);
   const [bedsheets, setBedsheets] = useState(0);
   const [totalWeight, setTotalWeight] = useState(0);
+  const { t } = useTranslation();
 
   // Calculate real-time
   useEffect(() => {
@@ -69,17 +71,17 @@ const WeightCalculator = () => {
   };
 
   const getRecommendation = (w: number) => {
-    if (w === 0) return "เลือกจำนวนผ้า";
-    if (w <= 10) return "เครื่องซัก 9 - 10 KG";
-    if (w <= 14) return "เครื่องซัก 14 KG";
-    if (w <= 20) return "เครื่องซัก 18 - 20 KG";
-    if (w <= 28) return "เครื่องซัก 28 KG";
-    if (w <= 35) return "เครื่องซัก+อบ(2in1) 35 KG";
-    return "แนะนำแบ่งซัก 2 ตะกร้า";
+    if (w === 0) return t('weightCalculator.selectClothes');
+    if (w <= 10) return t('weightCalculator.washer9kg');
+    if (w <= 14) return t('weightCalculator.washer14kg');
+    if (w <= 20) return t('weightCalculator.washer20kg');
+    if (w <= 28) return t('weightCalculator.washer28kg');
+    if (w <= 35) return t('weightCalculator.washer35kg');
+    return t('weightCalculator.splitWash');
   };
 
   return (
-    <section className="py-12 bg-[#F8F9FB] relative overflow-hidden">
+    <section className="py-12 bg-white relative overflow-hidden">
       {/* Background Blobs */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
         <div className="absolute top-[10%] left-[-5%] w-[400px] h-[400px] bg-[#ff2500]/5 rounded-full blur-[80px]" />
@@ -100,21 +102,21 @@ const WeightCalculator = () => {
             {/* Header */}
             <div className="flex items-center justify-between mb-6">
               <div>
-                <h2 className="text-2xl font-extrabold text-slate-800">คำนวณน้ำหนักผ้า</h2>
-                <p className="text-slate-500 text-sm mt-0.5">กะปริมาณผ้าของคุณได้ง่ายๆ</p>
+                <h2 className="text-2xl font-extrabold text-slate-800">{t('weightCalculator.title')}</h2>
+                <p className="text-slate-500 text-sm mt-0.5">{t('weightCalculator.subtitle')}</p>
               </div>
               <button 
                 onClick={reset}
                 className="text-xs text-slate-400 hover:text-[#ff2500] font-medium transition-colors px-3 py-1 rounded-full hover:bg-red-50"
               >
-                รีเซ็ต
+                {t('weightCalculator.reset')}
               </button>
             </div>
 
             {/* Inputs */}
             <div className="space-y-3 mb-6">
               <Stepper 
-                label="เสื้อยืด / เสื้อเชิ้ต" 
+                label={t('weightCalculator.shirt')} 
                 sublabel="~0.3 kg"
                 icon={<ShirtIcon />} 
                 value={shirts} 
@@ -123,7 +125,7 @@ const WeightCalculator = () => {
                 bgColor="bg-blue-50"
               />
               <Stepper 
-                label="กางเกงขายาว" 
+                label={t('weightCalculator.pants')} 
                 sublabel="~0.5 kg"
                 icon={<PantIcon />} 
                 value={pants} 
@@ -132,7 +134,7 @@ const WeightCalculator = () => {
                 bgColor="bg-indigo-50"
               />
               <Stepper 
-                label="กางเกงขาสั้น" 
+                label={t('weightCalculator.shorts')} 
                 sublabel="~0.3 kg"
                 icon={<ShortsIcon />} 
                 value={shorts} 
@@ -141,7 +143,7 @@ const WeightCalculator = () => {
                 bgColor="bg-teal-50"
               />
               <Stepper 
-                label="ผ้าขนหนู" 
+                label={t('weightCalculator.towel')} 
                 sublabel="~0.7 kg"
                 icon={<TowelIcon />} 
                 value={towels} 
@@ -150,7 +152,7 @@ const WeightCalculator = () => {
                 bgColor="bg-orange-50"
               />
               <Stepper 
-                label="ผ้าปูที่นอน" 
+                label={t('weightCalculator.bedsheet')} 
                 sublabel="~1.5 kg"
                 icon={<BedIcon />} 
                 value={bedsheets} 
@@ -166,7 +168,7 @@ const WeightCalculator = () => {
               
               <div className="flex items-start justify-between relative z-10">
                 <div>
-                  <div className="text-slate-400 text-xs font-bold uppercase tracking-wider mb-1">น้ำหนักรวม</div>
+                  <div className="text-slate-400 text-xs font-bold uppercase tracking-wider mb-1">{t('weightCalculator.totalWeight')}</div>
                   <div className="text-4xl font-extrabold tracking-tight">
                     {totalWeight.toFixed(1)} <span className="text-lg text-slate-500 font-medium">KG</span>
                   </div>
@@ -205,7 +207,7 @@ const WeightCalculator = () => {
                       <WasherIcon />
                    </div>
                    <div>
-                      <div className="text-[10px] text-slate-400 font-bold uppercase">ขนาดเครื่องที่แนะนำ</div>
+                      <div className="text-[10px] text-slate-400 font-bold uppercase">{t('weightCalculator.recommendedSize')}</div>
                       <div className="text-lg font-bold text-white leading-tight">
                         {getRecommendation(totalWeight)}
                       </div>
@@ -233,9 +235,9 @@ const WeightCalculator = () => {
               />
             </div>
             <div className="-mt-8 max-w-lg">
-              <h3 className="text-xl font-bold text-slate-800 mb-2">เลือกเครื่องซักผ้าให้เหมาะ</h3>
+              <h3 className="text-xl font-bold text-slate-800 mb-2">{t('weightCalculator.chooseMachine')}</h3>
               <p className="text-sm text-slate-500">
-                การใส่น้ำหนักผ้าให้พอดีกับขนาดเครื่อง จะช่วยให้ผ้าสะอาดขึ้นและถนอมเนื้อผ้า
+                {t('weightCalculator.machineDesc')}
               </p>
             </div>
           </motion.div>

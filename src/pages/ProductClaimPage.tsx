@@ -10,6 +10,7 @@ import {
 import { useToast } from "../hooks/use-toast";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 // Assets
 import bgImage from "../assets/images/washer.png";
@@ -22,14 +23,14 @@ const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx-k5yX-bhFBL
 // --- Types & Schema ---
 
 const problemOptions = [
-  "เสื้อผ้าสูญหาย",
-  "เสื้อผ้าชำรุด",
-  "ผ้าไม่สะอาด",
-  "ผ้าอบไม่แห้ง",
-  "ไฟดับ",
-  "เครื่องซักมีปัญหา",
-  "ไรเดอร์ไม่สุภาพ",
-  "อื่นๆ",
+  { value: "เสื้อผ้าสูญหาย", key: "claim.problems.lost" },
+  { value: "เสื้อผ้าชำรุด", key: "claim.problems.damaged" },
+  { value: "ผ้าไม่สะอาด", key: "claim.problems.unclean" },
+  { value: "ผ้าอบไม่แห้ง", key: "claim.problems.notDry" },
+  { value: "ไฟดับ", key: "claim.problems.powerOutage" },
+  { value: "เครื่องซักมีปัญหา", key: "claim.problems.machineIssue" },
+  { value: "ไรเดอร์ไม่สุภาพ", key: "claim.problems.rudeRider" },
+  { value: "อื่นๆ", key: "claim.problems.others" },
 ];
 
 const formSchema = z.object({
@@ -58,18 +59,20 @@ type ClaimData = {
 // --- Components ---
 
 const HeroSection = () => {
+  const { t } = useTranslation();
+  
     const features = [{
         icon: HeartHandshake,
-        title: "ช่วยเหลือ",
-        description: "ทีมงานพร้อมช่วยเหลือคุณตลอด 24 ชั่วโมง"
+        title: t("claim.featureHelp"),
+        description: t("claim.featureHelpDesc")
       }, {
         icon: Shield,
-        title: "ปลอดภัย",
-        description: "ข้อมูลของคุณได้รับการปกป้องอย่างดี"
+        title: t("claim.featureSafe"),
+        description: t("claim.featureSafeDesc")
       }, {
         icon: MessageSquareText,
-        title: "รับข้อเสนอแนะ",
-        description: "เรายินดีรับฟังทุกความคิดเห็นของคุณ"
+        title: t("claim.featureFeedback"),
+        description: t("claim.featureFeedbackDesc")
       }];
 
   return (
@@ -97,21 +100,21 @@ const HeroSection = () => {
           <div className="animate-fade-in-up opacity-0 mb-8" style={{ animationDelay: '0.1s', animationFillMode: 'forwards' }}>
             <span className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/10 backdrop-blur-md text-white text-sm font-medium border border-white/20 shadow-lg">
               <span className="w-2 h-2 rounded-full bg-[#ff2500] animate-pulse" />
-              บริการช่วยเหลือลูกค้า
+              {t("claim.heroBadge")}
             </span>
           </div>
 
           {/* Title */}
           <h1 className="text-4xl md:text-5xl lg:text-7xl font-bold text-slate-800 mb-6 leading-tight drop-shadow-sm text-white">
-            ศูนย์รับแจ้งปัญหา
-            <span className="block text-[#ff2500]">Product Claim</span>
+            {t("claim.heroTitle")}
+            <span className="block text-[#ff2500]">{t("claim.heroTitleHighlight")}</span>
           </h1>
 
           {/* Description */}
           <p className="text-lg md:text-xl text-slate-600 mb-14 max-w-2xl mx-auto leading-relaxed text-white">
-            พบปัญหาในการใช้งาน? สินค้าเสียหาย? หรือต้องการความช่วยเหลือ?
+            {t("claim.heroDesc")}
             <br className="hidden md:block" />
-            แจ้งเรื่องผ่านระบบออนไลน์ได้ตลอด 24 ชั่วโมง
+            {t("claim.heroDesc2")}
           </p>
 
           {/* CTA Button */}
@@ -125,7 +128,7 @@ const HeroSection = () => {
                 className="inline-flex items-center gap-3 px-8 py-4 bg-[#ff2500] hover:bg-[#d62000] text-white rounded-full text-lg font-bold shadow-lg shadow-orange-500/30 transition-all hover:-translate-y-1"
             >
               <MessageSquareText className="w-5 h-5" />
-              แจ้งปัญหาเลย
+              {t("claim.ctaButton")}
             </a>
           </div>
 
@@ -151,7 +154,7 @@ const HeroSection = () => {
   );
 };
 
-const renderStatusStep = (stepNum: number, label: string, currentStatus: string) => {
+const renderStatusStep = (stepNum: number, labelKey: string, currentStatus: string, t: any) => {
     // Map status string to step number (1-4)
     // English fallback supported just in case
     let currentStepNum = 1;
@@ -182,24 +185,28 @@ const renderStatusStep = (stepNum: number, label: string, currentStatus: string)
                 )}
             </div>
             <span className={`text-xs font-medium text-center ${isActive ? activeTextClass : "text-slate-400"}`}>
-                {label}
+                {t(labelKey)}
             </span>
         </div>
     );
 };
 
-const getEstimatedWaitTime = (problem: string) => {
+const getEstimatedWaitTime = (problem: string, t: any) => {
+    const hours = t("claim.estimate.time.hour");
+    const days = t("claim.estimate.time.day");
+    
     switch (problem) {
-        case "เสื้อผ้าสูญหาย": return { check: "48 ชั่วโมง", process: "15 วัน", total: "17 วัน", reason: "ต้องเช็กหลายฝ่าย (ร้าน + ไรเดอร์)" };
-        case "เสื้อผ้าชำรุด": return { check: "48 ชั่วโมง", process: "14 วัน", total: "16 วัน", reason: "ตรวจสภาพ + พิจารณาชดเชย" };
-        case "ผ้าไม่สะอาด": return { check: "24 ชั่วโมง", process: "24 ชั่วโมง", total: "24 ชั่วโมง", reason: "ซักใหม่ได้ทันที" };
-        case "ผ้าอบไม่แห้ง": return { check: "24 ชั่วโมง", process: "24 ชั่วโมง", total: "24 ชั่วโมง", reason: "แก้หน้างานเร็ว" };
-        case "ไฟดับ": return { check: "24 ชั่วโมง", process: "24 ชั่วโมง", total: "48 ชั่วโมง", reason: "ตรวจสอบสถานการณ์ + ดำเนินการ" };
-        case "เครื่องซักมีปัญหา": return { check: "24 ชั่วโมง", process: "24 ชั่วโมง", total: "48 ชั่วโมง", reason: "ตรวจสอบเครื่อง + ซ่อม/แก้ไข" };
-        case "ไรเดอร์ไม่สุภาพ": return { check: "24 ชั่วโมง", process: "24 ชั่วโมง", total: "48 ชั่วโมง", reason: "ตรวจสอบ + แจ้งเตือน" };
-        default: return { check: "1–2 วัน", process: "7-14 วัน", total: "8-16 วัน", reason: "ขึ้นอยู่กับกรณี" };
+        case "เสื้อผ้าสูญหาย": return { check: `48 ${hours}`, process: `15 ${days}`, total: `17 ${days}`, reason: t("claim.estimate.reasons.lost") };
+        case "เสื้อผ้าชำรุด": return { check: `48 ${hours}`, process: `14 ${days}`, total: `16 ${days}`, reason: t("claim.estimate.reasons.damaged") };
+        case "ผ้าไม่สะอาด": return { check: `24 ${hours}`, process: `24 ${hours}`, total: `24 ${hours}`, reason: t("claim.estimate.reasons.unclean") };
+        case "ผ้าอบไม่แห้ง": return { check: `24 ${hours}`, process: `24 ${hours}`, total: `24 ${hours}`, reason: t("claim.estimate.reasons.notDry") };
+        case "ไฟดับ": return { check: `24 ${hours}`, process: `24 ${hours}`, total: `48 ${hours}`, reason: t("claim.estimate.reasons.powerOutage") };
+        case "เครื่องซักมีปัญหา": return { check: `24 ${hours}`, process: `24 ${hours}`, total: `48 ${hours}`, reason: t("claim.estimate.reasons.machineIssue") };
+        case "ไรเดอร์ไม่สุภาพ": return { check: `24 ${hours}`, process: `24 ${hours}`, total: `48 ${hours}`, reason: t("claim.estimate.reasons.rudeRider") };
+        default: return { check: `1–2 ${days}`, process: `7-14 ${days}`, total: `8-16 ${days}`, reason: t("claim.estimate.reasons.default") };
     }
 };
+
 const FireworkExplosion = ({ x, y, delay, color }: { x: string; y: string; delay: number; color: string }) => {
     return (
         <div className="absolute pointer-events-none" style={{ left: x, top: y }}>
@@ -301,6 +308,7 @@ const ConfettiRain = () => {
 };
 
 const SuccessView = ({ existingClaim, onClear, onRefresh, loadingStatus }: { existingClaim: ClaimData, onClear: () => void, onRefresh: (ticketId: string) => void, loadingStatus: boolean }) => {
+    const { t } = useTranslation();
     const { toast } = useToast(); // Fix: Add useToast hook
     const [progressWidth, setProgressWidth] = useState('0%');
 
@@ -525,12 +533,12 @@ const SuccessView = ({ existingClaim, onClear, onRefresh, loadingStatus }: { exi
             
             {/* Ticket ID Badge */}
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-slate-100 rounded-full text-slate-600 font-mono font-bold text-lg mb-8 border border-slate-200 mx-auto">
-                <span>TICKET:</span>
+                <span>{t("claim.success.ticket")}</span>
                 <span className="text-[#ff2500]">{existingClaim.ticketId}</span>
                 <button 
                     onClick={() => {
                         navigator.clipboard.writeText(existingClaim.ticketId);
-                        toast({ title: "คัดลอกรหัสแล้ว" });
+                        toast({ title: t("claim.success.copy") });
                     }}
                     className="p-1 hover:bg-slate-200 rounded-md transition-colors"
                 >
@@ -550,11 +558,11 @@ const SuccessView = ({ existingClaim, onClear, onRefresh, loadingStatus }: { exi
                 </div>
 
                 <h2 className="text-3xl font-bold text-red-600 mb-4">
-                  เคลมถูกปฏิเสธ
+                  {t("claim.rejected.title")}
                 </h2>
 
                 <p className="text-slate-500 mb-6">
-                  เราขออภัย เคลมของคุณไม่สามารถดำเนินการได้
+                  {t("claim.rejected.desc")}
                 </p>
 
                 {/* แสดงเหตุผลการปฏิเสธ */}
@@ -563,7 +571,7 @@ const SuccessView = ({ existingClaim, onClear, onRefresh, loadingStatus }: { exi
                     <div className="flex items-start gap-3">
                       <AlertCircle className="w-5 h-5 text-red-500 shrink-0 mt-0.5" />
                       <div className="text-left">
-                        <p className="text-sm font-medium text-red-700 mb-1">เหตุผล:</p>
+                        <p className="text-sm font-medium text-red-700 mb-1">{t("claim.rejected.reason")}</p>
                         <p className="text-sm text-red-600">{existingClaim.rejection_reason}</p>
                       </div>
                     </div>
@@ -571,7 +579,7 @@ const SuccessView = ({ existingClaim, onClear, onRefresh, loadingStatus }: { exi
                 )}
 
                 <p className="text-sm text-slate-400 mb-10">
-                  หากมีข้อสงสัย กรุณาติดต่อเจ้าหน้าที่ผ่าน LINE Official
+                  {t("claim.rejected.contact")}
                 </p>
               </>
             ) : (
@@ -587,14 +595,13 @@ const SuccessView = ({ existingClaim, onClear, onRefresh, loadingStatus }: { exi
                 <div className="flex items-center justify-center gap-2 mb-4">
                   <PartyPopper className="w-6 h-6 text-orange-400" />
                   <h2 className="text-3xl font-bold text-slate-800">
-                    ดำเนินการสำเร็จ
+                    {t("claim.success.title")}
                   </h2>
                   <PartyPopper className="w-6 h-6 text-orange-400" />
                 </div>
 
                 <p className="text-slate-500 mb-10">
-                  เราได้รับข้อมูลการแจ้งปัญหาของคุณแล้ว <br/>
-                  ทีมงานกำลังตรวจสอบและจะดำเนินการให้เร็วที่สุด
+                  {t("claim.success.desc")}
                 </p>
               </>
             )}
@@ -694,10 +701,10 @@ const SuccessView = ({ existingClaim, onClear, onRefresh, loadingStatus }: { exi
                     
                     {/* Steps */}
                     <div className="flex justify-between relative">
-                        {renderStatusStep(1, "แจ้งปัญหา", existingClaim.status)}
-                        {renderStatusStep(2, "กำลังตรวจสอบ", existingClaim.status)}
-                        {renderStatusStep(3, "ดำเนินการ", existingClaim.status)}
-                        {renderStatusStep(4, "สำเร็จ", existingClaim.status)}
+                        {renderStatusStep(1, "claim.status.submitted", existingClaim.status, t)}
+                        {renderStatusStep(2, "claim.status.reviewing", existingClaim.status, t)}
+                        {renderStatusStep(3, "claim.status.processing", existingClaim.status, t)}
+                        {renderStatusStep(4, "claim.status.completed", existingClaim.status, t)}
                     </div>
                 </div>
                 )}
@@ -707,15 +714,15 @@ const SuccessView = ({ existingClaim, onClear, onRefresh, loadingStatus }: { exi
                 <div className="mt-8 mb-8 bg-white border border-slate-200 rounded-xl p-6 shadow-sm mx-auto max-w-lg transition-all">
                     <h3 className="text-slate-800 font-bold mb-4 flex items-center gap-2 justify-center">
                         <Clock className="w-5 h-5 text-orange-500" />
-                        ระยะเวลาดำเนินการโดยประมาณ
+                        {t("claim.estimate.title")}
                     </h3>
                     
                     {/* --- ADMIN OVERRIDE --- */}
                     {existingClaim.custom_estimate && existingClaim.custom_estimate.toString().trim() !== "" ? (
                         <div className="bg-red-50 p-6 rounded-xl border border-red-100 text-center animate-in fade-in zoom-in-95">
-                             <div className="text-sm text-slate-500 mb-2">ประเมินโดยเจ้าหน้าที่</div>
+                             <div className="text-sm text-slate-500 mb-2">{t("claim.estimate.adminOverride")}</div>
                              <div className="text-3xl font-bold text-[#ff2500] mb-1">{existingClaim.custom_estimate}</div>
-                             <div className="text-xs text-slate-400">ระยะเวลาอาจมีการเปลี่ยนแปลงตามสถานการณ์จริง</div>
+                             <div className="text-xs text-slate-400">{t("claim.estimate.adminRemark")}</div>
                         </div>
                     ) : (
                         <>
@@ -723,27 +730,27 @@ const SuccessView = ({ existingClaim, onClear, onRefresh, loadingStatus }: { exi
                             {(existingClaim.status !== 'กำลังดำเนินการ' && existingClaim.status !== 'processing' 
                             && existingClaim.status !== 'สำเร็จ' && existingClaim.status !== 'completed') && (
                                 <div className="bg-orange-50 p-4 rounded-lg border border-orange-100 text-center animate-in fade-in slide-in-from-bottom-2">
-                                    <div className="text-sm text-slate-500 mb-2">อยู่ในขั้นตอน: <span className="text-[#ff2500] font-bold">กำลังตรวจสอบ</span></div>
-                                    <div className="text-3xl font-bold text-slate-800 mb-1">{getEstimatedWaitTime(existingClaim.data.problem).check}</div>
-                                    <div className="text-xs text-slate-400">เวลาโดยประมาณสำหรับการตรวจสอบ</div>
+                                    <div className="text-sm text-slate-500 mb-2 whitespace-pre-wrap">{t("claim.estimate.checking").split(':')[0]}: <span className="text-[#ff2500] font-bold">{t("claim.status.reviewing")}</span></div>
+                                    <div className="text-3xl font-bold text-slate-800 mb-1">{getEstimatedWaitTime(existingClaim.data.problem, t).check}</div>
+                                    <div className="text-xs text-slate-400">{t("claim.estimate.checkingRemark")}</div>
                                 </div>
                             )}
 
                             {/* Processing Stage */}
                             {(existingClaim.status === 'กำลังดำเนินการ' || existingClaim.status === 'processing') && (
                                 <div className="bg-blue-50 p-4 rounded-lg border border-blue-100 text-center animate-in fade-in slide-in-from-bottom-2">
-                                    <div className="text-sm text-slate-500 mb-2">อยู่ในขั้นตอน: <span className="text-blue-600 font-bold">กำลังดำเนินการ</span></div>
-                                    <div className="text-3xl font-bold text-slate-800 mb-1">{getEstimatedWaitTime(existingClaim.data.problem).process}</div>
-                                    <div className="text-xs text-slate-400">เวลาโดยประมาณสำหรับการดำเนินการ/จัดส่ง</div>
+                                    <div className="text-sm text-slate-500 mb-2 whitespace-pre-wrap">{t("claim.estimate.processing").split(':')[0]}: <span className="text-blue-600 font-bold">{t("claim.status.processing")}</span></div>
+                                    <div className="text-3xl font-bold text-slate-800 mb-1">{getEstimatedWaitTime(existingClaim.data.problem, t).process}</div>
+                                    <div className="text-xs text-slate-400">{t("claim.estimate.processingRemark")}</div>
                                 </div>
                             )}
                             
                             {/* Completed Stage */}
                             {(existingClaim.status === 'สำเร็จ' || existingClaim.status === 'completed') && (
                                 <div className="bg-green-50 p-4 rounded-lg border border-green-100 text-center animate-in fade-in slide-in-from-bottom-2">
-                                    <div className="text-sm text-slate-500 mb-2">สถานะ: <span className="text-green-600 font-bold">เสร็จสิ้น</span></div>
-                                    <div className="text-3xl font-bold text-slate-800 mb-1">{getEstimatedWaitTime(existingClaim.data.problem).total}</div>
-                                    <div className="text-xs text-slate-400">ระยะเวลาดำเนินการรวมทั้งหมดโดยประมาณ</div>
+                                    <div className="text-sm text-slate-500 mb-2 whitespace-pre-wrap">{t("claim.estimate.completed").split(':')[0]}: <span className="text-green-600 font-bold">{t("claim.status.completed")}</span></div>
+                                    <div className="text-3xl font-bold text-slate-800 mb-1">{getEstimatedWaitTime(existingClaim.data.problem, t).total}</div>
+                                    <div className="text-xs text-slate-400">{t("claim.estimate.completedRemark")}</div>
                                 </div>
                             )}
                         </>
@@ -758,7 +765,7 @@ const SuccessView = ({ existingClaim, onClear, onRefresh, loadingStatus }: { exi
                         className="text-sm text-[#ff2500] hover:text-[#d62000] flex items-center gap-2 disabled:opacity-50"
                      >
                         <RefreshCw className={`w-4 h-4 ${loadingStatus ? "animate-spin" : ""}`} />
-                        อัปเดตสถานะล่าสุด
+                        {t("claim.success.updateStatus")}
                      </button>
                 </div>
 
@@ -768,7 +775,7 @@ const SuccessView = ({ existingClaim, onClear, onRefresh, loadingStatus }: { exi
                 to="/"
                 className="px-8 py-3.5 rounded-xl font-semibold text-slate-600 bg-white border border-slate-200 hover:bg-slate-50 transition-all shadow-sm"
               >
-                กลับหน้าหลัก
+                {t("claim.success.backHome")}
               </Link>
               <button
                 onClick={onClear}
@@ -781,8 +788,8 @@ const SuccessView = ({ existingClaim, onClear, onRefresh, loadingStatus }: { exi
               >
                 {existingClaim.status === 'สำเร็จ' || existingClaim.status === 'completed' ||
                  existingClaim.status === 'ปฏิเสธ' || existingClaim.status === 'rejected'
-                  ? 'แจ้งเรื่องใหม่'
-                  : 'ยกเลิกเคลม'}
+                  ? t("claim.success.newClaim")
+                  : t("claim.success.cancelClaim")}
               </button>
             </div>
           </div>
@@ -1104,7 +1111,7 @@ const ProductClaimPage = () => {
     window.location.reload();
   };
 
-
+  const { t } = useTranslation();
 
   // If claim exists, show success view
   if (existingClaim) {
@@ -1287,7 +1294,7 @@ const ProductClaimPage = () => {
                     },
                     y: {
                         duration: 2,
-                        repeat: Infinity,
+                        repeat: Infinity, 
                         ease: "easeInOut",
                         repeatType: "mirror"
                     },
@@ -1326,7 +1333,7 @@ const ProductClaimPage = () => {
                 >
                   <span className="flex items-center gap-2 text-slate-700 font-medium">
                     <Clock className="w-5 h-5 text-slate-400" />
-                    ประวัติการแจ้งเคลม ({claimHistory.length} รายการ)
+                    {t("claim.historyTitle")} ({claimHistory.length})
                   </span>
                   <ChevronDown className={`w-5 h-5 text-slate-400 transition-transform ${showHistory ? 'rotate-180' : ''}`} />
                 </button>
@@ -1351,7 +1358,12 @@ const ProductClaimPage = () => {
                               ? 'bg-slate-100 text-slate-700'
                               : 'bg-orange-100 text-orange-700'
                           }`}>
-                            {claim.status}
+                            {claim.status === 'สำเร็จ' || claim.status === 'completed' ? t("claim.status.completed") :
+                             claim.status === 'ปฏิเสธ' || claim.status === 'rejected' ? t("claim.status.rejected") :
+                             claim.status === 'ยกเลิก' ? t("claim.status.cancelled") :
+                             claim.status === 'กำลังตรวจสอบ' || claim.status === 'reviewing' ? t("claim.status.reviewing") :
+                             claim.status === 'กำลังดำเนินการ' || claim.status === 'processing' ? t("claim.status.processing") :
+                             t("claim.status.submitted")}
                           </span>
                         </div>
                         <p className="text-sm text-slate-600">
@@ -1366,7 +1378,7 @@ const ProductClaimPage = () => {
                         </p>
                         {claim.rejection_reason && (
                           <p className="text-xs text-red-500 mt-1">
-                            เหตุผล: {claim.rejection_reason}
+                            {t("claim.rejected.reason")} {claim.rejection_reason}
                           </p>
                         )}
                       </div>
@@ -1401,10 +1413,10 @@ const ProductClaimPage = () => {
                 <div className="space-y-6">
                 <div className="text-center mb-8">
                     <h3 className="text-2xl font-bold text-slate-800 mb-2">
-                    แจ้งปัญหา
+                    {t("claim.formTitle")}
                     </h3>
                     <p className="text-slate-500">
-                    กรุณากรอกข้อมูลจริงเพื่อให้เจ้าหน้าที่ติดต่อกลับได้
+                    {t("claim.formDesc")}
                     </p>
                 </div>
 
@@ -1412,18 +1424,18 @@ const ProductClaimPage = () => {
                     {/* Name */}
                     <div className="md:col-span-2">
                         <label className="block text-sm font-medium text-slate-700 mb-2">
-                        ชื่อ-นามสกุล <span className="text-red-500">*</span>
+                        {t("claim.fields.name")} <span className="text-red-500">*</span>
                         </label>
                         <input
                         type="text"
                         {...register("name")}
                         className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#ff2500]/20 focus:border-[#ff2500] transition-all"
-                        placeholder="ชื่อจริง นามสกุล"
+                        placeholder={t("claim.fields.namePlaceholder")}
                         />
                         {errors.name && (
                         <p className="mt-1.5 text-sm text-red-500 flex items-center gap-1.5">
                             <AlertCircle className="w-4 h-4" />
-                            {errors.name.message}
+                            {errors.name ? (errors.name.message === "กรุณากรอกชื่อ-นามสกุล" ? t("claim.validation.name") : errors.name.message) : ""}
                         </p>
                         )}
                     </div>
@@ -1431,19 +1443,23 @@ const ProductClaimPage = () => {
                     {/* Phone */}
                     <div>
                         <label className="block text-sm font-medium text-slate-700 mb-2">
-                        เบอร์โทรศัพท์ <span className="text-red-500">*</span>
+                        {t("claim.fields.phone")} <span className="text-red-500">*</span>
                         </label>
                         <input
                         type="tel"
                         {...register("phone")}
                         maxLength={10}
                         className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#ff2500]/20 focus:border-[#ff2500] transition-all"
-                        placeholder="เบอร์โทรศัพท์"
+                        placeholder={t("claim.fields.phonePlaceholder")}
                         />
                         {errors.phone && (
                         <p className="mt-1.5 text-sm text-red-500 flex items-center gap-1.5">
                             <AlertCircle className="w-4 h-4" />
-                            {errors.phone.message}
+                            {errors.phone ? (
+                                errors.phone.message === "เบอร์โทรศัพท์ต้องมี 10 หลัก" ? t("claim.validation.phoneLength") : 
+                                errors.phone.message === "กรุณากรอกเฉพาะตัวเลข" ? t("claim.validation.phoneNum") :
+                                errors.phone.message
+                            ) : ""}
                         </p>
                         )}
                     </div>
@@ -1451,18 +1467,18 @@ const ProductClaimPage = () => {
                     {/* Email */}
                     <div>
                         <label className="block text-sm font-medium text-slate-700 mb-2">
-                        อีเมล <span className="text-red-500">*</span>
+                        {t("claim.fields.email")} <span className="text-red-500">*</span>
                         </label>
                         <input
                         type="email"
                         {...register("email")}
                         className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#ff2500]/20 focus:border-[#ff2500] transition-all"
-                        placeholder="example@email.com"
+                        placeholder={t("claim.fields.emailPlaceholder")}
                         />
                         {errors.email && (
                         <p className="mt-1.5 text-sm text-red-500 flex items-center gap-1.5">
                             <AlertCircle className="w-4 h-4" />
-                            {errors.email.message}
+                            {errors.email ? (errors.email.message === "กรุณากรอกอีเมลที่ถูกต้อง" ? t("claim.validation.email") : errors.email.message) : ""}
                         </p>
                         )}
                     </div>
@@ -1471,19 +1487,19 @@ const ProductClaimPage = () => {
                 {/* Problem Selection */}
                 <div>
                     <label className="block text-sm font-medium text-slate-700 mb-3">
-                    ปัญหาที่พบ <span className="text-red-500">*</span>
+                    {t("claim.fields.problem")} <span className="text-red-500">*</span>
                     </label>
                     <div className="grid grid-cols-2 gap-3">
                     {problemOptions.map((problem) => {
                         // เสื้อผ้าสูญหาย และ เสื้อผ้าชำรุด เป็นสีแดง
-                        const isRedProblem = problem === "เสื้อผ้าสูญหาย" || problem === "เสื้อผ้าชำรุด";
+                        const isRedProblem = problem.value === "เสื้อผ้าสูญหาย" || problem.value === "เสื้อผ้าชำรุด";
                         // ผ้าไม่สะอาด และ ผ้าอบไม่แห้ง เป็นสีส้ม
-                        const isOrangeProblem = problem === "ผ้าไม่สะอาด" || problem === "ผ้าอบไม่แห้ง";
+                        const isOrangeProblem = problem.value === "ผ้าไม่สะอาด" || problem.value === "ผ้าอบไม่แห้ง";
                         // ไฟดับ และ เครื่องซักมีปัญหา เป็นสีแอมเบอร์
-                        const isAmberProblem = problem === "ไฟดับ" || problem === "เครื่องซักมีปัญหา";
+                        const isAmberProblem = problem.value === "ไฟดับ" || problem.value === "เครื่องซักมีปัญหา";
                         
                         const getStyleClasses = () => {
-                          if (selectedProblem === problem) {
+                          if (selectedProblem === problem.value) {
                             if (isRedProblem) {
                               return "border-red-500 bg-red-50 ring-2 ring-red-200";
                             } else if (isOrangeProblem) {
@@ -1505,7 +1521,7 @@ const ProductClaimPage = () => {
                         };
                         
                         const getTextColor = () => {
-                          if (selectedProblem === problem) {
+                          if (selectedProblem === problem.value) {
                             if (isRedProblem) return "text-red-600 font-semibold";
                             if (isOrangeProblem) return "text-orange-600 font-semibold";
                             if (isAmberProblem) return "text-amber-700 font-semibold";
@@ -1526,19 +1542,19 @@ const ProductClaimPage = () => {
                         
                         return (
                           <label
-                            key={problem}
+                            key={problem.value}
                             className={`relative flex items-center justify-center py-3 px-4 rounded-xl border-2 cursor-pointer transition-all duration-200 h-14 ${getStyleClasses()}`}
                           >
                             <input
                               type="radio"
                               {...register("problem")}
-                              value={problem}
+                              value={problem.value}
                               className="sr-only"
                             />
                             <span className={`text-sm font-medium ${getTextColor()}`}>
-                              {problem}
+                              {t(problem.key)}
                             </span>
-                            {selectedProblem === problem && (
+                            {selectedProblem === problem.value && (
                               <CheckCircle2 className={`absolute top-2 right-2 w-4 h-4 ${getCheckColor()}`} />
                             )}
                           </label>
@@ -1550,13 +1566,13 @@ const ProductClaimPage = () => {
                     {selectedProblem === "อื่นๆ" && (
                          <div className="mt-3 animate-in fade-in slide-in-from-top-1">
                             <label className="block text-sm font-medium text-slate-700 mb-2">
-                                โปรดระบุปัญหาอื่นๆ <span className="text-red-500">*</span>
+                                {t("claim.fields.others")} <span className="text-red-500">*</span>
                             </label>
                             <input 
                                 type="text" 
                                 {...register("others")} 
                                 className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#ff2500]/20 focus:border-[#ff2500] transition-all"
-                                placeholder="ระบุปัญหาที่พบ..." 
+                                placeholder={t("claim.fields.othersPlaceholder")} 
                             />
                          </div>
                     )}
@@ -1564,7 +1580,7 @@ const ProductClaimPage = () => {
                     {errors.problem && (
                     <p className="mt-2 text-sm text-red-500 flex items-center gap-1.5">
                         <AlertCircle className="w-4 h-4" />
-                        {errors.problem.message}
+                        {errors.problem ? (errors.problem.message === "กรุณาเลือกปัญหา" ? t("claim.validation.problem") : errors.problem.message) : ""}
                     </p>
                     )}
                 </div>
@@ -1575,7 +1591,7 @@ const ProductClaimPage = () => {
                     onClick={handleNextStep}
                     className="w-full py-4 bg-slate-900 text-white rounded-xl font-bold hover:bg-slate-800 transition-all flex items-center justify-center gap-2 mt-4"
                 >
-                    ถัดไป (Next Step)
+                    {t("claim.fields.nextBtn")}
                     <ChevronRight className="w-5 h-5" />
                 </button>
                 </div>
@@ -1585,17 +1601,17 @@ const ProductClaimPage = () => {
                 <div className="space-y-6">
                 <div className="text-center mb-8">
                     <h3 className="text-2xl font-bold text-slate-800 mb-2">
-                    รายละเอียดเพิ่มเติม
+                    {t("claim.step2Title")}
                     </h3>
                     <p className="text-slate-500">
-                    ระบุข้อมูลเพิ่มเติมเพื่อให้ตรวจสอบได้รวดเร็วขึ้น
+                    {t("claim.step2Desc")}
                     </p>
                 </div>
 
                 {/* Date */}
                 <div>
                     <label className="block text-sm font-medium text-slate-700 mb-2">
-                    วันที่เกิดปัญหา <span className="text-red-500">*</span>
+                    {t("claim.fields.date")} <span className="text-red-500">*</span>
                     </label>
                     <input
                     type="date"
@@ -1605,7 +1621,7 @@ const ProductClaimPage = () => {
                     {errors.date && (
                     <p className="mt-1.5 text-sm text-red-500 flex items-center gap-1.5">
                         <AlertCircle className="w-4 h-4" />
-                        {errors.date.message}
+                        {errors.date ? (errors.date.message === "กรุณาเลือกวันที่" ? t("claim.validation.date") : errors.date.message) : ""}
                     </p>
                     )}
                 </div>
@@ -1613,7 +1629,7 @@ const ProductClaimPage = () => {
                 {/* Shop Branch */}
                 <div>
                     <label className="block text-sm font-medium text-slate-700 mb-2">
-                    ชื่อร้าน-สาขาที่ใช้บริการ <span className="text-red-500">*</span>
+                    {t("claim.fields.shopBox")} <span className="text-red-500">*</span>
                     </label>
                     <div className="relative">
                         <select
@@ -1621,7 +1637,7 @@ const ProductClaimPage = () => {
                             className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#ff2500]/20 focus:border-[#ff2500] transition-all appearance-none bg-white font-medium text-slate-700"
                             defaultValue=""
                         >
-                            <option value="" disabled>เลือกสาขาที่ใช้บริการ...</option>
+                            <option value="" disabled>{t("claim.fields.shopBoxPlaceholder")}</option>
                             {stores.map((store) => (
                                 <option key={store.id} value={store.name}>
                                     {store.name}
@@ -1635,7 +1651,7 @@ const ProductClaimPage = () => {
                     {errors.shop_branch && (
                     <p className="mt-1.5 text-sm text-red-500 flex items-center gap-1.5">
                         <AlertCircle className="w-4 h-4" />
-                        {errors.shop_branch.message}
+                        {errors.shop_branch ? (errors.shop_branch.message === "กรุณากรอกชื่อร้าน-สาขา" ? t("claim.validation.shop") : errors.shop_branch.message) : ""}
                     </p>
                     )}
                 </div>
@@ -1643,7 +1659,7 @@ const ProductClaimPage = () => {
                 {/* Image Upload */}
                 <div>
                     <label className="block text-sm font-medium text-slate-700 mb-2">
-                    ภาพประกอบ (ถ้ามี) - สูงสุด 5 รูป
+                    {t("claim.fields.images")}
                     </label>
                     
                     {/* Image Gallery */}
@@ -1675,10 +1691,10 @@ const ProductClaimPage = () => {
                           <Upload className="w-5 h-5" />
                         </div>
                         <span className="text-sm font-medium text-slate-700">
-                          {imagePreview.length > 0 ? 'เพิ่มรูปภาพ' : 'คลิกเพื่ออัปโหลดรูปภาพ'}
+                          {imagePreview.length > 0 ? t("claim.fields.images") : t("claim.fields.imagesDesc")}
                         </span>
                         <span className="text-xs text-slate-400 mt-1">
-                          ({imagePreview.length}/5 รูป, สูงสุด 5MB/รูป)
+                          ({imagePreview.length}/5, max 5MB/file)
                         </span>
                         <input type="file" accept="image/*" multiple onChange={handleImageUpload} className="hidden" />
                       </label>
@@ -1688,7 +1704,7 @@ const ProductClaimPage = () => {
                 {/* Others */}
                 <div>
                     <label className="block text-sm font-medium text-slate-700 mb-2">
-                    รายละเอียดเพิ่มเติม
+                    {t("claim.fields.others")}
                     </label>
                     <textarea
                     {...register("others")}
@@ -1707,13 +1723,13 @@ const ProductClaimPage = () => {
                             className="mt-1 w-5 h-5 rounded border-slate-300 text-[#ff2500] focus:ring-[#ff2500]" 
                         />
                         <span className="text-sm text-slate-600 leading-relaxed">
-                            ข้าพเจ้ายืนยันว่าข้อมูลข้างต้นเป็นความจริง และยินยอมให้ทีมงานติดต่อกลับเพื่อสอบถามรายละเอียดเพิ่มเติม
+                            {t("claim.fields.consent")}
                         </span>
                     </label>
                     {errors.consent && (
                         <p className="mt-2 text-sm text-red-500 flex items-center gap-1.5 ml-8">
                             <AlertCircle className="w-4 h-4" />
-                            {errors.consent.message}
+                            {errors.consent ? (errors.consent.message === "กรุณายืนยันข้อมูล" ? t("claim.validation.consent") : errors.consent.message) : ""}
                         </p>
                     )}
                 </div>
@@ -1726,7 +1742,7 @@ const ProductClaimPage = () => {
                         className="w-1/3 py-4 bg-slate-100 text-slate-700 rounded-xl font-bold hover:bg-slate-200 transition-all flex items-center justify-center gap-2"
                     >
                         <ChevronLeft className="w-5 h-5" />
-                        ย้อนกลับ
+                        {t("claim.fields.prevBtn")}
                     </button>
                     <button
                         type="submit"
@@ -1736,11 +1752,11 @@ const ProductClaimPage = () => {
                         {isSubmitting ? (
                         <>
                             <Loader2 className="w-5 h-5 animate-spin" />
-                            กำลังส่งข้อมูล...
+                            {t("claim.fields.submitting")}
                         </>
                         ) : (
                         <>
-                            ยืนยันการแจ้งเคลม
+                            {t("claim.fields.submitBtn")}
                             <Send className="w-5 h-5" />
                         </>
                         )}

@@ -1,5 +1,6 @@
 import { motion, useMotionValue } from "framer-motion";
 import { useEffect, useRef } from "react";
+import { useTranslation } from "react-i18next";
 
 import otteri from "../assets/logos/otteri2.png";
 import laundrybar from "../assets/logos/laundrybar2.png";
@@ -33,6 +34,7 @@ const LaundryPartners = () => {
   const x = useMotionValue(0);
   const velocity = useRef(-0.4);
   const isHovering = useRef(false);
+  const { t } = useTranslation();
 
 
   useEffect(() => {
@@ -62,7 +64,7 @@ const LaundryPartners = () => {
   return (
     <section className="py-8 bg-gray-50 overflow-hidden">
       <h2 className="text-center text-2xl font-bold mb-10 text-[#EF1111]">
-        ร้านสะดวกซักที่ให้บริการ
+        {t('laundryPartners.title')}
       </h2>
 
       <div

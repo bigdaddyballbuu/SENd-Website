@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useTranslation } from "react-i18next";
 
 import sisaket from "../assets/areas/sisaket.png";
 import ubon from "../assets/areas/ubon.jpg";
@@ -8,37 +9,39 @@ import kalasin from "../assets/areas/kalasin2.png";
 import roiet from "../assets/areas/roiet.jpeg";
 import mahasarakham from "../assets/areas/mahasarakham.jpg";
 
-/* ================= DATA ================= */
-
-const activeArea = {
-  name: "ศรีสะเกษ",
-  image: sisaket,
-  description: "ครอบคลุมพื้นที่ อ.เมือง และจุดสำคัญทั่วจังหวัด",
-  landmark: "หอคอยศรีลำดวนเฉลิมพระเกียรติ",
-};
-
-const upcomingAreas = [
-  { name: "อุบลราชธานี", image: ubon, landmark: "วัดสิรินธรวรารามภูพร้าว" },
-  { name: "ขอนแก่น", image: khonkaen, landmark: "พระมหาธาตุแก่นนคร" },
-  { name: "กาฬสินธุ์", image: kalasin, landmark: "พิพิธภัณฑ์สิรินธร" },
-  { name: "ร้อยเอ็ด", image: roiet, landmark: "บึงพลาญชัย" },
-  { name: "มหาสารคาม", image: mahasarakham, landmark: "พระธาตุนาดูน" },
-];
-
 /* ================= COMPONENT ================= */
 
 const ServiceArea = () => {
   const [selectedArea, setSelectedArea] = useState<{
     name: string;
+    nameKey: string;
     image: string;
-    landmark?: string;
+    landmarkKey?: string;
+    description?: string;
   } | null>(null);
+  const { t } = useTranslation();
+
+  const activeArea = {
+    name: t('serviceArea.areas.sisaket'),
+    nameKey: "sisaket",
+    image: sisaket,
+    description: t('serviceArea.sisaketDesc'),
+    landmarkKey: "sisaket",
+  };
+
+  const upcomingAreas = [
+    { name: t('serviceArea.areas.ubon'), nameKey: "ubon", image: ubon, landmarkKey: "ubon" },
+    { name: t('serviceArea.areas.khonkaen'), nameKey: "khonkaen", image: khonkaen, landmarkKey: "khonkaen" },
+    { name: t('serviceArea.areas.kalasin'), nameKey: "kalasin", image: kalasin, landmarkKey: "kalasin" },
+    { name: t('serviceArea.areas.roiet'), nameKey: "roiet", image: roiet, landmarkKey: "roiet" },
+    { name: t('serviceArea.areas.mahasarakham'), nameKey: "mahasarakham", image: mahasarakham, landmarkKey: "mahasarakham" },
+  ];
 
   // Duplicate for infinite loop illusion
   const loopAreas = [...upcomingAreas, ...upcomingAreas, ...upcomingAreas];
 
   return (
-    <section className="py-24 bg-[#F8F9FB] relative overflow-hidden">
+    <section className="py-24 bg-white relative overflow-hidden">
       {/* Background Decorations */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <div className="absolute -top-[20%] -right-[10%] w-[800px] h-[800px] bg-gradient-to-br from-[#ff2500]/5 to-[#fe3d00]/5 rounded-full blur-[120px]" />
@@ -55,7 +58,7 @@ const ServiceArea = () => {
             viewport={{ once: true }}
             className="text-[#ff2500] font-bold tracking-widest uppercase text-sm mb-3 block"
           >
-            Service Area
+            {t('serviceArea.headerLabel')}
           </motion.span>
           <motion.h2 
             initial={{ opacity: 0, y: 10 }}
@@ -64,7 +67,7 @@ const ServiceArea = () => {
             transition={{ delay: 0.1 }}
             className="text-3xl md:text-5xl font-extrabold text-slate-900 mb-6"
           >
-            พื้นที่ให้บริการ <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#ff2500] to-[#fe3d00]">SENd</span>
+            {t('serviceArea.title')} <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#ff2500] to-[#fe3d00]">SENd</span>
           </motion.h2>
           <motion.p 
             initial={{ opacity: 0, y: 10 }}
@@ -73,7 +76,7 @@ const ServiceArea = () => {
             transition={{ delay: 0.2 }}
             className="text-slate-500 max-w-2xl mx-auto text-lg font-light"
           >
-            เราเริ่มต้นที่ศรีสะเกษ และกำลังขยายพื้นที่อย่างต่อเนื่อง<br className="hidden md:block"/>เพื่อส่งมอบความสะดวกสบายไปให้ถึงมือคุณ
+            {t('serviceArea.subtitle')}
           </motion.p>
         </div>
 
@@ -103,7 +106,7 @@ const ServiceArea = () => {
                         <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
                         <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
                       </span>
-                      เปิดให้บริการแล้ว
+                      {t('serviceArea.nowOpen')}
                    </div>
                 </div>
 
@@ -111,7 +114,7 @@ const ServiceArea = () => {
                   <h3 className="text-4xl font-bold text-white mb-2">{activeArea.name}</h3>
                   <p className="text-slate-200 text-lg mb-4 opacity-90">{activeArea.description}</p>
                   <div className="inline-flex items-center gap-2 text-white font-semibold border-b border-white/30 pb-0.5 group-hover:border-white transition-colors">
-                    ดูรายละเอียด <span className="text-xl">→</span>
+                    {t('serviceArea.viewDetails')} <span className="text-xl">→</span>
                   </div>
                 </div>
               </div>
@@ -123,11 +126,14 @@ const ServiceArea = () => {
             <div className="mb-6 flex items-center justify-between px-2">
               <h3 className="text-xl font-bold text-slate-800 flex items-center gap-2">
                 <span className="w-2 h-8 bg-[#ff2500] rounded-full block"></span>
-                เร็ว ๆ นี้ (Coming Soon)
+                {t('serviceArea.comingSoon')}
               </h3>
             </div>
 
-            <div className="relative overflow-hidden -mx-4 px-4 py-4">
+            <div 
+              className="relative overflow-hidden -mx-4 px-4 py-4"
+              style={{ maskImage: 'linear-gradient(to right, transparent, black 10%, black 90%, transparent)', WebkitMaskImage: 'linear-gradient(to right, transparent, black 10%, black 90%, transparent)' }}
+            >
               <style>{`
                 @keyframes scroll {
                   0% { transform: translateX(0); }
@@ -143,7 +149,7 @@ const ServiceArea = () => {
               <div className="flex gap-6 w-max animate-scroll">
                 {loopAreas.map((area, index) => (
                   <motion.div
-                    key={`${area.name}-${index}`}
+                    key={`${area.nameKey}-${index}`}
                     onClick={() => setSelectedArea(area)}
                     whileHover={{ y: -10, scale: 1.02 }}
                     className="relative w-[240px] aspect-[4/3] rounded-3xl overflow-hidden shadow-lg cursor-pointer flex-shrink-0 group"
@@ -157,7 +163,7 @@ const ServiceArea = () => {
                     
                     <div className="absolute top-4 right-4">
                       <span className="bg-black/50 backdrop-blur-md text-white/90 text-[10px] px-3 py-1 rounded-full border border-white/10">
-                        COMING SOON
+                        {t('serviceArea.comingSoonBadge')}
                       </span>
                     </div>
 
@@ -168,10 +174,6 @@ const ServiceArea = () => {
                   </motion.div>
                 ))}
               </div>
-              
-              {/* Fade Edges */}
-              <div className="absolute top-0 right-0 w-24 h-full bg-gradient-to-l from-[#F8F9FB] to-transparent pointer-events-none z-10" />
-              <div className="absolute top-0 left-0 w-12 h-full bg-gradient-to-r from-[#F8F9FB] to-transparent pointer-events-none z-10" />
             </div>
           </div>
 
@@ -214,11 +216,13 @@ const ServiceArea = () => {
                   <h3 className="text-4xl font-bold mb-2">{selectedArea.name}</h3>
                   <div className="flex justify-between items-center text-white/80 text-lg">
                     <span>
-                      {selectedArea.name === "ศรีสะเกษ" 
-                        ? "พร้อมให้บริการเต็มรูปแบบ สั่งเลย!" 
-                        : "อดใจรออีกนิด เรากำลังรีบไปหาคุณ"}
+                      {selectedArea.nameKey === "sisaket" 
+                        ? t('serviceArea.activeServiceMsg')
+                        : t('serviceArea.upcomingServiceMsg')}
                     </span>
-                    <span className="text-right">{selectedArea.landmark}</span>
+                    <span className="text-right">
+                      {selectedArea.landmarkKey && t(`serviceArea.landmarks.${selectedArea.landmarkKey}`)}
+                    </span>
                   </div>
                 </div>
               </div>

@@ -1,8 +1,11 @@
 import { motion } from "framer-motion";
+import { useTranslation } from "react-i18next";
 import googlePlay from "../assets/store/google-play.svg";
 import appStore from "../assets/store/app-store.svg";
 
 const DownloadCTA = () => {
+  const { t } = useTranslation();
+
   return (
     <section className="py-10 bg-white">
       <div className="max-w-[1440px] mx-auto px-0 text-center">
@@ -15,7 +18,7 @@ const DownloadCTA = () => {
           viewport={{ once: true }}
           className="text-3xl md:text-4xl font-bold mb-6 text-[#FF3333]"
         >
-          ดาวน์โหลดแอป SENd ได้แล้ววันนี้
+          {t('downloadCTA.title')}
         </motion.h2>
 
         {/* BUTTONS */}

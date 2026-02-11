@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { MapContainer, TileLayer, Marker, Popup, useMapEvents, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
+import { useTranslation } from "react-i18next";
 
 // Hero background image
 import laundryHeroBg from "../assets/bg/bg-maps.png";
@@ -225,7 +226,7 @@ export const stores: Store[] = [
   },
   {
     id: "washenjoy-sisaket",
-    name: "Washenjoy ศรีสะเกษสะดวกซัก 24 ชั่วโมง",
+    name: "Washenjoy สาขา ศรีสะเกษสะดวกซัก 24 ชั่วโมง",
     logo: washenjoyLogo,
     image: washenjoyImg,
     washers: 6,
@@ -238,7 +239,7 @@ export const stores: Store[] = [
   },
   {
     id: "washmetic-sisaket",
-    name: "Washmetic สาขา ถนนหลังโรงพักศรีสะเกษ",
+    name: "Washmetic ถนนหลังโรงพักศรีสะเกษ",
     logo: washmeticLogo,
     image: washmeticImg,
     washers: 6,
@@ -267,7 +268,7 @@ export const stores: Store[] = [
   // LaundryBar
   { 
     id: "laundrybar-ubonBranch1", 
-    name: "LaundryBar สวนวนารมย์", 
+    name: "LaundryBar สาขา สวนวนารมย์", 
     logo: laundrybarLogo, 
     image: placeholderImg, 
     washers: 0, 
@@ -281,7 +282,7 @@ export const stores: Store[] = [
   },
   { 
     id: "laundrybar-ubonBranch2", 
-    name: "LaundryBar สุขาอุปถัมภ์", 
+    name: "LaundryBar สาขา สุขาอุปถัมภ์", 
     logo: laundrybarLogo, 
     image: placeholderImg, 
     washers: 0, 
@@ -295,7 +296,7 @@ export const stores: Store[] = [
   },
   { 
     id: "laundrybar-ubonBranch3", 
-    name: "LaundryBar ห้วยวังนอง", 
+    name: "LaundryBar สาขา ห้วยวังนอง", 
     logo: laundrybarLogo, 
     image: placeholderImg, 
     washers: 0, 
@@ -311,7 +312,7 @@ export const stores: Store[] = [
   // WashXpress
   {
     id: "washxpress-ubonBranch1",
-    name: "WashXpress PT ดอนกลาง",
+    name: "WashXpress สาขา PT ดอนกลาง",
     logo: washxpressLogo,
     image: placeholderImg,
     washers: 0,
@@ -339,7 +340,7 @@ export const stores: Store[] = [
   },
   {
     id: "washxpress-ubonBranch3",
-    name: "WashXpress ถนนทุ่งหลวง",
+    name: "WashXpress สาขาถนนทุ่งหลวง",
     logo: washxpressLogo,
     image: placeholderImg,
     washers: 0,
@@ -353,7 +354,7 @@ export const stores: Store[] = [
   },
   {
     id: "washxpress-ubonBranch4",
-    name: "WashXpress ซอยชยางกูร40",
+    name: "WashXpress สาขา ซอยชยางกูร40",
     logo: washxpressLogo,
     image: placeholderImg,
     washers: 0,
@@ -367,7 +368,7 @@ export const stores: Store[] = [
   },
   {
     id: "washxpress-ubonBranch5",
-    name: "WashXpress ถนนธรรมวิถี",
+    name: "WashXpress สาขา ถนนธรรมวิถี",
     logo: washxpressLogo,
     image: placeholderImg,
     washers: 0,
@@ -381,7 +382,7 @@ export const stores: Store[] = [
   },
   {
     id: "washexpress-ubonBranch6",
-    name: "WashXpress ตลาดสันติสุข 2",
+    name: "WashXpress สาขา ตลาดสันติสุข 2",
     logo: washxpressLogo,
     image: placeholderImg,
     washers: 0,
@@ -395,7 +396,7 @@ export const stores: Store[] = [
   },
   {
     id: "washxpress-ubonBranch7",
-    name: "WashXpress อุบล-ตระการ 7",
+    name: "WashXpress สาขา อุบล-ตระการ 7",
     logo: washxpressLogo,
     image: placeholderImg,
     washers: 0,
@@ -409,7 +410,7 @@ export const stores: Store[] = [
   },
   {
     id: "washxpress-ubonBranch8",
-    name: "WashXpress ห้วยวังนอง",
+    name: "WashXpress สาขา ห้วยวังนอง",
     logo: washxpressLogo,
     image: placeholderImg,
     washers: 0,
@@ -423,7 +424,7 @@ export const stores: Store[] = [
   },
   {
     id: "washxpress-ubonBranch9",
-    name: "WashXpress สุริยาตย์20",
+    name: "WashXpress สาขา สุริยาตย์20",
     logo: washxpressLogo,
     image: placeholderImg,
     washers: 0,
@@ -437,7 +438,7 @@ export const stores: Store[] = [
   },
   {
     id: "washxpress-ubonBranch10",
-    name: "WashXpress ถนนจงกลนิธารณ์",
+    name: "WashXpress สาขา ถนนจงกลนิธารณ์",
     logo: washxpressLogo,
     image: placeholderImg,
     washers: 0,
@@ -868,6 +869,7 @@ const Badge = ({ children, className }: { children: React.ReactNode; className?:
 function LocationMarker() {
   const [position, setPosition] = useState<L.LatLng | null>(null);
   const [loading, setLoading] = useState(false);
+  const { t } = useTranslation();
 
   const map = useMapEvents({
     locationfound(e) {
@@ -882,7 +884,7 @@ function LocationMarker() {
       const mockLat = 15.115;
       const mockLng = 104.33;
       
-      alert(`ไม่สามารถระบุตำแหน่งของคุณได้\n(กรุณาเปิด GPS หรืออนุญาตการเข้าถึงตำแหน่ง)\n\nระบบจะแสดงร้านซักใน "จ.ศรีสะเกษ" เป็นค่าเริ่มต้นครับ`);
+      alert(t('laundryPage.locationError'));
       
       setPosition({ lat: mockLat, lng: mockLng } as L.LatLng);
       map.flyTo([mockLat, mockLng], 14);
@@ -894,20 +896,20 @@ function LocationMarker() {
     <>
       {position && (
         <Marker position={position}>
-          <Popup>📍 คุณอยู่ที่นี่</Popup>
+          <Popup>📍 {t('laundryPage.youAreHere')}</Popup>
         </Marker>
       )}
       <div className="absolute bottom-4 right-4 z-[1000]">
         <button
           onClick={(e) => {
-            e.stopPropagation(); // Prevent map click
+            e.stopPropagation();
             setLoading(true);
             map.locate({ enableHighAccuracy: true });
           }}
           disabled={loading}
           className="bg-white text-slate-700 px-4 py-2 rounded-xl shadow-lg border border-slate-200 font-bold text-sm hover:bg-slate-50 active:scale-95 transition-all flex items-center gap-2 disabled:opacity-70 disabled:cursor-wait"
         >
-          {loading ? "กำลังค้นหา..." : "📍 ระบุตำแหน่งของฉัน"}
+          {loading ? t('laundryPage.locating') : `📍 ${t('laundryPage.findMyLocation')}`}
         </button>
       </div>
     </>
@@ -929,6 +931,7 @@ const LaundryPage: React.FC = () => {
   const [selectedStore, setSelectedStore] = useState<Store | null>(null);
   const [selectedProvince, setSelectedProvince] = useState<"all" | "sisaket" | "ubon">("all");
   const [selectedDistrict, setSelectedDistrict] = useState<"all" | "mueang" | "warin">("all");
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (!selectedStore) return;
@@ -1001,10 +1004,10 @@ const LaundryPage: React.FC = () => {
                 className="max-w-2xl mx-auto"
               >
                 <h1 className="text-4xl md:text-5xl font-extrabold text-white mb-4 tracking-tight drop-shadow-lg">
-                  ค้นหา<span className="text-transparent bg-clip-text bg-gradient-to-r from-[#ff6b4a] to-[#ffb347]">ร้านสะดวกซัก</span>
+                  {t('laundryPage.heroTitle')}<span className="text-transparent bg-clip-text bg-gradient-to-r from-[#ff6b4a] to-[#ffb347]">{t('laundryPage.heroTitleHighlight')}</span>
                 </h1>
                 <p className="text-lg text-white/90 drop-shadow">
-                  สะดวก ใกล้คุณ สะอาด รวดเร็ว พร้อมให้บริการตลอด 24 ชม.
+                  {t('laundryPage.heroSubtitle')}
                 </p>
               </motion.div>
             </div>
@@ -1032,8 +1035,8 @@ const LaundryPage: React.FC = () => {
                     <div className="font-sans min-w-[200px]">
                       <h3 className="font-bold text-sm mb-1">{store.name}</h3>
                       <div className="flex items-center gap-2 text-xs text-slate-500 mb-2">
-                        <span>💧 {store.washers} เครื่อง</span>
-                        <span>🔥 {store.dryers} เครื่อง</span>
+                        <span>💧 {store.washers} {t('laundryPage.washers')}</span>
+                        <span>🔥 {store.dryers} {t('laundryPage.dryers')}</span>
                       </div>
                       <a 
                         href={`https://www.google.com/maps/dir/?api=1&destination=${store.lat},${store.lng}`}
@@ -1041,7 +1044,7 @@ const LaundryPage: React.FC = () => {
                         rel="noreferrer"
                         className="block w-full text-center bg-red-500 !text-white text-xs font-bold py-1.5 rounded-lg hover:bg-red-600"
                       >
-                        นำทาง
+                        {t('laundryPage.navigate')}
                       </a>
                     </div>
                   </Popup>
@@ -1060,7 +1063,7 @@ const LaundryPage: React.FC = () => {
           >
             {/* Row 1: Province Filter */}
             <div className="flex flex-col sm:flex-row items-center gap-2">
-              <span className="text-sm font-semibold text-slate-500 hidden sm:block">จังหวัด:</span>
+              <span className="text-sm font-semibold text-slate-500 hidden sm:block">{t('laundryPage.province')}:</span>
               <div className="inline-flex items-center gap-1 p-1.5 bg-white rounded-2xl shadow-lg border border-slate-200">
                 <button
                   onClick={() => setSelectedProvince("all")}
@@ -1070,7 +1073,7 @@ const LaundryPage: React.FC = () => {
                       : "text-slate-600 hover:bg-slate-100"
                   }`}
                 >
-                  🌍 ทั้งหมด
+                  🌍 {t('laundryPage.filterAll')}
                 </button>
                 <button
                   onClick={() => setSelectedProvince("sisaket")}
@@ -1080,7 +1083,7 @@ const LaundryPage: React.FC = () => {
                       : "text-slate-600 hover:bg-slate-100"
                   }`}
                 >
-                  📍 ศรีสะเกษ
+                  📍 {t('laundryPage.filterSisaket')}
                 </button>
                 <button
                   onClick={() => setSelectedProvince("ubon")}
@@ -1090,7 +1093,7 @@ const LaundryPage: React.FC = () => {
                       : "text-slate-600 hover:bg-slate-100"
                   }`}
                 >
-                  📍 อุบลราชธานี
+                  📍 {t('laundryPage.filterUbon')}
                 </button>
               </div>
             </div>
@@ -1105,7 +1108,7 @@ const LaundryPage: React.FC = () => {
                   transition={{ duration: 0.3, ease: "easeInOut" }}
                   className="flex flex-col sm:flex-row items-center gap-2 overflow-hidden"
                 >
-                  <span className="text-sm font-semibold text-slate-500 hidden sm:block">อำเภอ:</span>
+                  <span className="text-sm font-semibold text-slate-500 hidden sm:block">{t('laundryPage.district')}:</span>
                   <div className="inline-flex items-center gap-1 p-1.5 bg-gradient-to-r from-orange-50 to-amber-50 rounded-2xl shadow-md border border-orange-200/50">
                     <button
                       onClick={() => setSelectedDistrict("all")}
@@ -1115,7 +1118,7 @@ const LaundryPage: React.FC = () => {
                           : "text-slate-600 hover:bg-white/80"
                       }`}
                     >
-                      ทั้งหมด
+                      {t('laundryPage.filterAll')}
                     </button>
                     <button
                       onClick={() => setSelectedDistrict("mueang")}
@@ -1125,7 +1128,7 @@ const LaundryPage: React.FC = () => {
                           : "text-slate-600 hover:bg-white/80"
                       }`}
                     >
-                      🏙️ เมืองอุบล
+                      🏙️ {t('laundryPage.filterMueang')}
                     </button>
                     <button
                       onClick={() => setSelectedDistrict("warin")}
@@ -1135,7 +1138,7 @@ const LaundryPage: React.FC = () => {
                           : "text-slate-600 hover:bg-white/80"
                       }`}
                     >
-                      🏘️ วารินชำราบ
+                      🏘️ {t('laundryPage.filterWarin')}
                     </button>
                   </div>
                 </motion.div>
@@ -1153,13 +1156,13 @@ const LaundryPage: React.FC = () => {
             <div className="flex items-center gap-3 w-full md:w-auto flex-1 bg-slate-50 px-4 py-3 rounded-xl border border-slate-200 focus-within:ring-2 focus-within:ring-[#ff2500]/20 transition-all">
               <span className="text-xl">⚖️</span>
               <div className="flex flex-col flex-1">
-                <label className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">ขนาดต่ำสุด</label>
+                <label className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">{t('laundryPage.minSize')}</label>
                 <input
                   type="number"
                   min={0}
                   value={kg}
                   onChange={(e) => setKg(e.target.value === "" ? "" : Number(e.target.value))}
-                  placeholder="ระบุ (KG)"
+                  placeholder={t('laundryPage.sizePlaceholder')}
                   className="bg-transparent outline-none w-full text-sm font-medium placeholder-slate-400"
                 />
               </div>
@@ -1170,20 +1173,20 @@ const LaundryPage: React.FC = () => {
             <div className="flex items-center gap-3 w-full md:w-auto flex-1 bg-slate-50 px-4 py-3 rounded-xl border border-slate-200 focus-within:ring-2 focus-within:ring-[#ff2500]/20 transition-all">
               <span className="text-xl">฿</span>
               <div className="flex flex-col flex-1">
-                <label className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">งบประมาณสูงสุด</label>
+                <label className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">{t('laundryPage.maxBudget')}</label>
                 <input
                   type="number"
                   min={0}
                   value={price}
                   onChange={(e) => setPrice(e.target.value === "" ? "" : Number(e.target.value))}
-                  placeholder="ราคา (บาท)"
+                  placeholder={t('laundryPage.pricePlaceholder')}
                   className="bg-transparent outline-none w-full text-sm font-medium placeholder-slate-400"
                 />
               </div>
             </div>
 
             <button className="w-full md:w-auto px-8 py-4 bg-[#ff2500] hover:bg-[#cc1e00] active:bg-[#a61900] text-white font-bold rounded-xl transition-colors shadow-lg shadow-[#ff2500]/20">
-              ค้นหาเลย
+              {t('laundryPage.searchBtn')}
             </button>
           </motion.div>
 
@@ -1227,15 +1230,15 @@ const LaundryPage: React.FC = () => {
                       <div className="flex flex-wrap gap-2 mb-4">
                         {store.isCombo ? (
                           <Badge className="bg-blue-50 text-blue-700 border border-blue-100">
-                             🫧 ซัก-อบ (2in1) {store.washers} เครื่อง
+                             🫧 {t('laundryPage.combo2in1')} {store.washers} {t('laundryPage.washers')}
                           </Badge>
                         ) : (
                           <>
                             <Badge className="bg-orange-50 text-orange-700 border border-orange-100">
-                              {store.washers} เครื่องซัก
+                              {store.washers} {t('laundryPage.washMachine')}
                             </Badge>
                             <Badge className="bg-red-50 text-red-700 border border-red-100">
-                              {store.dryers} เครื่องอบ
+                              {store.dryers} {t('laundryPage.dryMachine')}
                             </Badge>
                           </>
                         )}
@@ -1243,11 +1246,11 @@ const LaundryPage: React.FC = () => {
 
                       <div className="mt-auto pt-4 border-t border-slate-100 flex items-center justify-between">
                         <div className="flex flex-col">
-                          <span className="text-xs text-slate-500 font-medium">เริ่มต้น</span>
+                          <span className="text-xs text-slate-500 font-medium">{t('laundryPage.startFrom')}</span>
                           <span className="text-lg font-bold text-[#ff2500]">฿{store.price}</span>
                         </div>
                         <div className="flex flex-col items-end">
-                          <span className="text-xs text-slate-500 font-medium">รองรับ</span>
+                          <span className="text-xs text-slate-500 font-medium">{t('laundryPage.support')}</span>
                           <span className="text-sm font-bold text-slate-700">{store.maxKg} KG</span>
                         </div>
                       </div>
@@ -1262,8 +1265,8 @@ const LaundryPage: React.FC = () => {
                 <div className="bg-slate-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl">
                   🔍
                 </div>
-                <h3 className="text-xl font-bold text-slate-700">ไม่พบร้านที่คุณค้นหา</h3>
-                <p className="text-slate-500">ลองปรับเปลี่ยนเงื่อนไขการค้นหาดูนะครับ</p>
+                <h3 className="text-xl font-bold text-slate-700">{t('laundryPage.noStoresTitle')}</h3>
+                <p className="text-slate-500">{t('laundryPage.noStoresSubtitle')}</p>
               </div>
             )}
           </div>
@@ -1275,11 +1278,11 @@ const LaundryPage: React.FC = () => {
           <div className="relative overflow-hidden rounded-3xl bg-black text-white p-10 md:p-16 text-center max-w-5xl mx-auto shadow-2xl shadow-slate-200">
             <div className="relative z-10">
               <h2 className="text-3xl md:text-5xl font-extrabold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-white to-slate-400 py-2 leading-tight">
-                ซักผ้าง่ายขึ้นด้วยแอป SENd
+                {t('laundryPage.ctaTitle')}
               </h2>
               <p className="text-lg text-slate-400 mb-10 max-w-2xl mx-auto">
-                จองคิวร้านซัก เช็คสถานะเรียลไทม์ และเรียกไรเดอร์รับ-ส่งผ้าถึงหน้าบ้าน
-                <br className="hidden md:block" /> ดาวน์โหลดเลยวันนี้ เพื่อชีวิตที่สะดวกกว่า
+                {t('laundryPage.ctaDesc')}
+                <br className="hidden md:block" /> {t('laundryPage.ctaDesc2')}
               </p>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                 <a href="https://apps.apple.com/us/app/send-delivery/id6474961079" className="flex items-center gap-3 bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/10 px-6 py-3.5 rounded-xl transition-all hover:scale-105 active:scale-95">
@@ -1373,8 +1376,8 @@ const LaundryPage: React.FC = () => {
                   <div className="p-6 md:p-8 flex-1">
                     <h2 className="text-2xl font-bold text-slate-800 mb-2">{selectedStore.name}</h2>
                     <div className="flex items-center gap-2 mb-6">
-                      <span className="bg-green-100 text-green-700 px-2 py-0.5 rounded text-sm font-medium">เปิดให้บริการ</span>
-                      <span className="text-slate-400 text-sm">• 24 ชั่วโมง</span>
+                      <span className="bg-green-100 text-green-700 px-2 py-0.5 rounded text-sm font-medium">{t('laundryPage.nowOpen')}</span>
+                      <span className="text-slate-400 text-sm">• {t('laundryPage.24hours')}</span>
                     </div>
 
                     <div className="space-y-4">
@@ -1382,8 +1385,8 @@ const LaundryPage: React.FC = () => {
                         <div className="flex items-center p-3 bg-blue-50 rounded-xl">
                            <div className="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center mr-4 text-xl">🫧</div>
                            <div>
-                             <p className="text-sm text-slate-500 font-medium">เครื่องซัก-อบ (2in1)</p>
-                             <p className="font-bold text-slate-800 text-lg">{selectedStore.washers} เครื่อง</p>
+                             <p className="text-sm text-slate-500 font-medium">{t('laundryPage.comboMachine')}</p>
+                             <p className="font-bold text-slate-800 text-lg">{selectedStore.washers} {t('laundryPage.washers')}</p>
                            </div>
                         </div>
                       ) : (
@@ -1391,16 +1394,16 @@ const LaundryPage: React.FC = () => {
                           <div className="flex items-center p-3 bg-slate-50 rounded-xl">
                             <div className="w-10 h-10 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center mr-4 text-xl">💧</div>
                             <div>
-                              <p className="text-sm text-slate-500 font-medium">เครื่องซักผ้า</p>
-                              <p className="font-bold text-slate-800 text-lg">{selectedStore.washers} เครื่อง</p>
+                              <p className="text-sm text-slate-500 font-medium">{t('laundryPage.washerMachine')}</p>
+                              <p className="font-bold text-slate-800 text-lg">{selectedStore.washers} {t('laundryPage.washers')}</p>
                             </div>
                           </div>
 
                           <div className="flex items-center p-3 bg-slate-50 rounded-xl">
                             <div className="w-10 h-10 rounded-full bg-red-100 text-red-600 flex items-center justify-center mr-4 text-xl">🔥</div>
                             <div>
-                              <p className="text-sm text-slate-500 font-medium">เครื่องอบผ้า</p>
-                              <p className="font-bold text-slate-800 text-lg">{selectedStore.dryers} เครื่อง</p>
+                              <p className="text-sm text-slate-500 font-medium">{t('laundryPage.dryerMachine')}</p>
+                              <p className="font-bold text-slate-800 text-lg">{selectedStore.dryers} {t('laundryPage.dryers')}</p>
                             </div>
                           </div>
                         </>
@@ -1409,14 +1412,14 @@ const LaundryPage: React.FC = () => {
                       <div className="flex items-center p-3 bg-slate-50 rounded-xl">
                         <div className="w-10 h-10 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center mr-4 text-xl">⚖️</div>
                         <div>
-                          <p className="text-sm text-slate-500 font-medium">รองรับน้ำหนักสูงสุด</p>
+                          <p className="text-sm text-slate-500 font-medium">{t('laundryPage.maxWeight')}</p>
                           <p className="font-bold text-slate-800 text-lg">{selectedStore.maxKg} KG</p>
                         </div>
                       </div>
 
                       <div className="mt-6 pt-6 border-t border-slate-100">
                         <div className="flex justify-between items-end">
-                          <span className="text-slate-500 font-medium">ราคาเริ่มต้น</span>
+                          <span className="text-slate-500 font-medium">{t('laundryPage.startingPrice')}</span>
                           <span className="text-3xl font-extrabold text-[#ff2500]">฿{selectedStore.price}</span>
                         </div>
                       </div>

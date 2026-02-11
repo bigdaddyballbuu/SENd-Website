@@ -1,7 +1,10 @@
 import { motion } from "framer-motion";
 import Footer from "../components/Footer";
+import { useTranslation } from "react-i18next";
 
 const TermsPage = () => {
+  const { t } = useTranslation();
+
   return (
     <>
       <section className="min-h-screen bg-[#F8F9FB] pt-28 pb-20">
@@ -12,31 +15,29 @@ const TermsPage = () => {
             className="bg-white rounded-[2rem] p-8 md:p-12 shadow-sm border border-slate-100"
           >
             <h1 className="text-3xl md:text-4xl font-extrabold text-[#1F2933] mb-8">
-              เงื่อนไขการให้บริการ (Terms of Service)
+              {t('termsPage.title')}
             </h1>
             
             <div className="prose prose-lg text-slate-600">
-              <p className="text-sm text-slate-400 mb-8">แก้ไขล่าสุดเมื่อ: 1 มกราคม 2024</p>
+              <p className="text-sm text-slate-400 mb-8">{t('termsPage.lastUpdated')}</p>
               
               <p className="mb-6">
-                ยินดีต้อนรับสู่ SENd การใช้งานเว็บไซต์และแอปพลิเคชันของเราอยู่ภายใต้เงื่อนไขและข้อตกลงดังต่อไปนี้ 
-                โปรดอ่านอย่างละเอียดก่อนใช้บริการ
+                {t('termsPage.intro')}
               </p>
 
-              <h3 className="text-xl font-bold text-[#1F2933] mt-8 mb-4">1. การยอมรับเงื่อนไข</h3>
+              <h3 className="text-xl font-bold text-[#1F2933] mt-8 mb-4">{t('termsPage.section1Title')}</h3>
               <p className="mb-4">
-                เมื่อท่านเข้าใช้บริการของเรา ถือว่าท่านตกลงและยอมรับที่จะปฏิบัติตามข้อกำหนดและเงื่อนไขเหล่านี้ทุกประการ
+                {t('termsPage.section1Text')}
               </p>
 
-              <h3 className="text-xl font-bold text-[#1F2933] mt-8 mb-4">2. ขอบเขตการให้บริการ</h3>
+              <h3 className="text-xl font-bold text-[#1F2933] mt-8 mb-4">{t('termsPage.section2Title')}</h3>
               <p className="mb-4">
-                SENd เป็นตัวกลางในการเชื่อมโยงผู้ใช้กับร้านซักอบรีดพาร์ทเนอร์ เราไม่ได้เป็นผู้ให้บริการซักอบรีดโดยตรง 
-                แต่เราดูแลในส่วนของการรับ-ส่งและการประสานงาน
+                {t('termsPage.section2Text')}
               </p>
 
-              <h3 className="text-xl font-bold text-[#1F2933] mt-8 mb-4">3. ความรับผิดชอบ</h3>
+              <h3 className="text-xl font-bold text-[#1F2933] mt-8 mb-4">{t('termsPage.section3Title')}</h3>
               <p className="mb-4">
-                ในกรณีที่เกิดความเสียหายต่อทรัพย์สินระหว่างการใช้บริการ บริษัทจะชดเชยตามเงื่อนไขที่กำหนดไว้ในนโยบายการประกันสินค้าเสียหาย
+                {t('termsPage.section3Text')}
               </p>
 
             </div>

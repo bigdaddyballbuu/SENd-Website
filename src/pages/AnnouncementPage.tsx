@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import bgAnnouncement from "../assets/bg/bg-feed.png";
+import { useTranslation } from "react-i18next";
 
 /* =========================
    TYPES
@@ -198,6 +199,7 @@ const typeConfig: Record<AnnouncementType, { label: string; bg: string; text: st
    COMPONENT
 ========================= */
 const AnnouncementPage = () => {
+  const { t } = useTranslation();
   const [promos, setPromos] = useState<Announcement[]>([]);
   const [prNews, setPrNews] = useState<Announcement[]>([]);
   const [appUpdates, setAppUpdates] = useState<Announcement[]>([]);
@@ -372,7 +374,7 @@ const AnnouncementPage = () => {
             >
               <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white text-sm font-medium">
                 <span className="w-2 h-2 rounded-full bg-[#ff2500] animate-pulse" />
-                Campaigns & Updates
+                {t('announcement.badge')}
               </span>
             </motion.div>
 
@@ -383,7 +385,7 @@ const AnnouncementPage = () => {
               transition={{ delay: 0.1 }}
               className="text-4xl md:text-6xl font-black text-white mb-4"
             >
-              ศูนย์รวม<span className="text-transparent bg-clip-text bg-gradient-to-r from-[#ff2500] to-orange-400">ประกาศ</span>
+              {t('announcement.title')}<span className="text-transparent bg-clip-text bg-gradient-to-r from-[#ff2500] to-orange-400">{t('announcement.title2')}</span>
             </motion.h1>
             
             <motion.p
@@ -392,7 +394,7 @@ const AnnouncementPage = () => {
               transition={{ delay: 0.2 }}
               className="text-lg text-slate-300 max-w-xl mx-auto"
             >
-              โปรโมชั่นสุดพิเศษ ข่าวสารอัปเดต และประกาศสำคัญ ทั้งหมดรวมไว้ที่นี่
+              {t('announcement.description')}
             </motion.p>
           </div>
         </div>
@@ -492,8 +494,8 @@ const AnnouncementPage = () => {
                     🔥
                   </div>
                   <div>
-                    <h2 className="text-2xl md:text-3xl font-bold text-slate-900">โปรโมชั่นจัดเต็ม</h2>
-                    <p className="text-slate-500">ข้อเสนอพิเศษที่ไม่ควรพลาด</p>
+                    <h2 className="text-2xl md:text-3xl font-bold text-slate-900">{t('announcement.promoTitle')}</h2>
+                    <p className="text-slate-500">{t('announcement.promoDescription')}</p>
                   </div>
                 </div>
 
@@ -501,7 +503,7 @@ const AnnouncementPage = () => {
                 <div className="flex overflow-x-auto gap-6 pb-8 -mx-4 px-4 scrollbar-hide snap-x">
                   {promos.length === 0 && (
                     <div className="text-slate-400 px-6 py-12 bg-slate-50 rounded-3xl w-full text-center">
-                      ไม่มีโปรโมชั่นในขณะนี้
+                      {t('announcement.promoEmpty')}
                     </div>
                   )}
 
@@ -571,14 +573,14 @@ const AnnouncementPage = () => {
                     📢
                   </div>
                   <div>
-                    <h2 className="text-2xl md:text-3xl font-bold text-slate-900">ข่าวประชาสัมพันธ์</h2>
-                    <p className="text-slate-500">อัปเดตความเคลื่อนไหวล่าสุดจาก SENd</p>
+                    <h2 className="text-2xl md:text-3xl font-bold text-slate-900">{t('announcement.newsTitle')}</h2>
+                    <p className="text-slate-500">{t('announcement.newsDescription')}</p>
                   </div>
                 </div>
 
                 {prNews.length === 0 ? (
                   <div className="py-16 text-center bg-slate-50 rounded-3xl border-2 border-dashed border-slate-200 text-slate-400">
-                    ยังไม่มีข่าวประชาสัมพันธ์
+                    {t('announcement.newsEmpty')}
                   </div>
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -621,7 +623,7 @@ const AnnouncementPage = () => {
                               {item.description}
                             </p>
                             <div className="mt-4 flex items-center text-sm font-semibold text-[#ff2500] group-hover:gap-2 transition-all">
-                              <span>อ่านเพิ่มเติม</span>
+                              <span>{t('announcement.readMore')}</span>
                               <svg className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
                               </svg>
@@ -649,14 +651,14 @@ const AnnouncementPage = () => {
                     📲
                   </div>
                   <div>
-                    <h2 className="text-2xl md:text-3xl font-bold text-slate-900">อัปเดตแอปพลิเคชัน</h2>
-                    <p className="text-slate-500">ประวัติการอัปเดตและฟีเจอร์ใหม่</p>
+                    <h2 className="text-2xl md:text-3xl font-bold text-slate-900">{t('announcement.appTitle')}</h2>
+                    <p className="text-slate-500">{t('announcement.appDescription')}</p>
                   </div>
                 </div>
 
                 {appUpdates.length === 0 ? (
                   <div className="py-16 text-center bg-blue-50/50 rounded-3xl border-2 border-dashed border-blue-100 text-blue-400">
-                    ยังไม่มีประวัติการอัปเดต
+                    {t('announcement.appEmpty')}
                   </div>
                 ) : (
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -686,7 +688,7 @@ const AnnouncementPage = () => {
                             <div className="flex-1 min-w-0">
                               <div className="flex flex-wrap items-center gap-2 mb-2">
                                 <span className="text-xs bg-blue-500 text-white font-bold px-3 py-1 rounded-full">
-                                  VERSION UPDATE
+                                  {t('announcement.appUpdate')}
                                 </span>
                                 <span className="text-xs text-slate-400">
                                   {new Date(item.created_at).toLocaleDateString("th-TH")}
@@ -699,7 +701,7 @@ const AnnouncementPage = () => {
                                 {item.description}
                               </p>
                               <div className="flex items-center text-sm font-bold text-blue-600 group-hover:gap-2 transition-all">
-                                <span>อ่านรายละเอียด</span>
+                                <span>{t('announcement.readDetail')}</span>
                                 <svg className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
                                 </svg>

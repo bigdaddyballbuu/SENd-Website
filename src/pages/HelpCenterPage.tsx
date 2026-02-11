@@ -2,109 +2,21 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import bgAnnouncement from "../assets/bg/bg-help2.png";
+import { useTranslation } from "react-i18next";
 
 /* =========================
-   FAQ DATA
+   FAQ DATA CONFIG (icons & gradients only)
 ========================= */
-const faqs = [
-  {
-    category: "การใช้งานแอป",
-    icon: "📱",
-    gradient: "from-blue-500 to-cyan-400",
-    items: [
-      {
-        q: "ใช้งาน SENd อย่างไร?",
-        a: "ง่ายๆ เพียง 3 ขั้นตอน: 1. เลือกร้านซักที่คุณถูกใจในแอป 2. ระบุขนาดถังซักที่คุณต้องการและบริการต่างๆ 3. รอไรเดอร์มารับผ้าถึงหน้าบ้าน โดยเราจะมีทีมงานดูแลซัก อบ พับ ให้เรียบร้อยพร้อมส่งคืน",
-      },
-      {
-        q: "ให้บริการในพื้นที่ไหนบ้าง?",
-        a: "ปัจจุบัน SENd ให้บริการครอบคลุมในอำเภอเมือง จังหวัดศรีสะเกษ และกำลังขยายตัวสู่จังหวัดอุบลราชธานี, มหาสารคาม, ร้อยเอ็ด, ขอนแก่น, กาฬสินธุ์ เร็วๆ นี้",
-      },
-      {
-        q: "ใช้เวลาซักนานเท่าไหร่?",
-        a: "โดยปกติรอบการทำงาน (Turnaround time) จะอยู่ที่ 1-3 ชั่วโมง ขึ้นอยู่กับคิวของแต่ละร้านซัก คุณสามารถเช็คเวลาโดยประมาณได้ก่อนยืนยันออเดอร์ครับ",
-      },
-    ],
-  },
-  {
-    category: "บริการและการดูแลผ้า",
-    icon: "👕",
-    gradient: "from-purple-500 to-pink-400",
-    items: [
-      {
-        q: "รับซักอะไรบ้าง?",
-        a: "เรารับซักเสื้อผ้าทั่วไป, ชุดเครื่องนอน, ผ้านวม, ผ้าเช็ดตัว และผ้าม่าน (ขนาดเล็ก) *ไม่รับซักพรม, รองเท้า, หรือสินค้าแบรนด์เนมที่ต้องดูแลพิเศษ และผ้าที่ใช้สำหรับสัตว์เลี้ยง*",
-      },
-      {
-        q: "มีการแยกผ้าขาว/ผ้าสี หรือไม่?",
-        a: "แน่นอนครับ! มาตรฐานของพาร์ทเนอร์ร้านซักของเราจะทำการแยกผ้าสีและผ้าขาวออกจากกันเพื่อป้องกันสีตก และใช้อุณหภูมิน้ำที่เหมาะสมกับชนิดผ้า",
-      },
-      {
-        q: "ใช้น้ำยาซักผ้าอะไร?",
-        a: "ร้านค้าพาร์ทเนอร์ของเราใช้น้ำยาซักผ้าและน้ำยาปรับผ้านุ่มเกรดอุตสาหกรรมมาตรฐานโรงแรม หรือคุณสามารถเลือกสูตร 'Hypoallergenic' สำหรับผิวแพ้ง่ายได้ (ในร้านที่ร่วมรายการ)",
-      },
-    ],
-  },
-  {
-    category: "ราคาและการชำระเงิน",
-    icon: "💳",
-    gradient: "from-emerald-500 to-teal-400",
-    items: [
-      {
-        q: "คิดค่าบริการอย่างไร?",
-        a: "ค่าบริการคิดตามขนาดถังซัก (กิโลกรัม) ขึ้นอยู่กับร้านที่คุณเลือก โดยราคาเริ่มต้นภายใน 4 กิโลเมตร 49 บาท ถ้าเกินระยะทาง + เพิ่มกิโลเมตรละ 10 บาท",
-      },
-      {
-        q: "ชำระเงินช่องทางไหนได้บ้าง?",
-        a: "รองรับการสแกน QR Code (PromptPay), Mobile Banking ทุกธนาคาร และบัตรเครดิต/เดบิต (Visa/Mastercard) ผ่านแอปพลิเคชันได้อย่างปลอดภัย",
-      },
-      {
-        q: "ขอใบกำกับภาษีได้ไหม?",
-        a: "ได้ครับ สามารถระบุข้อมูลสำหรับออกใบกำกับภาษี (E-Tax Invoice) ได้ในขั้นตอนการชำระเงิน โดยเอกสารจะส่งเข้าอีเมลของคุณภายใน 24 ชม.",
-      },
-    ],
-  },
-  {
-    category: "ปัญหาที่พบบ่อย",
-    icon: "⚠️",
-    gradient: "from-amber-500 to-orange-400",
-    items: [
-      {
-        q: "เข้าสู่ระบบไม่ได้ ทำอย่างไร?",
-        a: "ลองตรวจสอบเบอร์โทรศัพท์ที่ลงทะเบียนว่าถูกต้องหรือไม่ หากลืมรหัสผ่าน สามารถกดที่เมนู 'ลืมรหัสผ่าน' ที่หน้า Login เพื่อทำการตั้งรหัสใหม่ผ่าน SMS OTP ได้เลยครับ",
-      },
-      {
-        q: "ปักหมุดแผนที่ไม่ได้ / หมุดไม่ตรง",
-        a: "แนะนำให้เปิด GPS (Location Service) ก่อนใช้งาน หากหมุดยังไม่ตรง สามารถใช้นิ้วเลื่อนที่แผนที่เพื่อปักหมุดตำแหน่งที่ถูกต้องด้วยตัวเอง หรือระบุ 'จุดสังเกต' เพิ่มเติมให้ไรเดอร์ทราบ",
-      },
-      {
-        q: "ชำระเงินไม่สำเร็จ ตัดบัตรไม่ได้?",
-        a: "กรุณาตรวจสอบยอดเงินคงเหลือ หรือวงเงินบัตรของท่าน หากยังไม่สำเร็จ แนะนำให้ลองเปลี่ยนช่องทางการชำระเงินเป็น QR PromptPay หรือติดต่อธนาคารเจ้าของบัตร",
-      },
-      {
-        q: "ไรเดอร์ไม่มารับผ้าตามนัด",
-        a: "หากเลยเวลานัดหมายเกิน 15 นาที ระบบจะแจ้งเตือนทีมงานทันที หรือคุณสามารถกดปุ่ม 'ติดตามงาน' ในหน้า Order Detail หรือทัก LINE หาเราได้เลยครับ",
-      }
-    ],
-  },
-  {
-    category: "ความปลอดภัยและการรับประกัน",
-    icon: "🛡️",
-    gradient: "from-slate-600 to-slate-500",
-    items: [
-      {
-        q: "ผ้าหายหรือเสียหาย รับผิดชอบไหม?",
-        a: "เรามีประกันความเสียหายวงเงินสูงสุด 2,000 บาทต่อออเดอร์ หากเกิดกรณีผ้าสูญหายหรือเสียหายจากการซัก (ตามเงื่อนไขที่กำหนด) ติดต่อเคลมได้ทันที",
-      },
-      {
-        q: "ข้อมูลส่วนตัวปลอดภัยแค่ไหน?",
-        a: "SENd ให้ความสำคัญกับข้อมูลส่วนบุคคล (PDPA) สูงสุด ข้อมูลที่อยู่และเบอร์โทรของคุณจะถูกเปิดเผยเฉพาะกับไรเดอร์ที่รับงานเท่านั้น และจะถูกปิดกั้นเมื่อออเดอร์จบ",
-      },
-    ],
-  },
+const faqConfig = [
+  { categoryKey: "category1", icon: "📱", gradient: "from-blue-500 to-cyan-400", questionKeys: ["question1", "question2", "question3"], answerKeys: ["answer1", "answer2", "answer3"] },
+  { categoryKey: "category2", icon: "👕", gradient: "from-purple-500 to-pink-400", questionKeys: ["question4", "question5", "question6"], answerKeys: ["answer4", "answer5", "answer6"] },
+  { categoryKey: "category3", icon: "💳", gradient: "from-emerald-500 to-teal-400", questionKeys: ["question7", "question8", "question9"], answerKeys: ["answer7", "answer8", "answer9"] },
+  { categoryKey: "category4", icon: "⚠️", gradient: "from-amber-500 to-orange-400", questionKeys: ["question10", "question11", "question12", "question13"], answerKeys: ["answer10", "answer11", "answer12", "answer13"] },
+  { categoryKey: "category5", icon: "🛡️", gradient: "from-slate-600 to-slate-500", questionKeys: ["question14", "question15"], answerKeys: ["answer14", "answer15"] },
 ];
 
 const HelpCenterPage = () => {
+  const { t } = useTranslation();
   const [search, setSearch] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [openQuestion, setOpenQuestion] = useState<string | null>(null);
@@ -117,6 +29,17 @@ const HelpCenterPage = () => {
     };
     setIsMobile(checkIfMobile());
   }, []);
+
+  // Build translated faqs from config
+  const faqs = faqConfig.map(cfg => ({
+    category: t(`helpCenter.${cfg.categoryKey}`),
+    icon: cfg.icon,
+    gradient: cfg.gradient,
+    items: cfg.questionKeys.map((qKey, i) => ({
+      q: t(`helpCenter.${qKey}`),
+      a: t(`helpCenter.${cfg.answerKeys[i]}`),
+    })),
+  }));
 
   const filteredFaqs = faqs
     .filter(group => !selectedCategory || group.category === selectedCategory)
@@ -160,7 +83,7 @@ const HelpCenterPage = () => {
             >
               <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white text-sm font-medium">
                 <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                พร้อมให้บริการ 24/7
+                {t('helpCenter.badge')}
               </span>
             </motion.div>
 
@@ -171,7 +94,7 @@ const HelpCenterPage = () => {
               transition={{ delay: 0.1 }}
               className="text-4xl md:text-6xl font-black text-center text-white mb-4"
             >
-              เราช่วยอะไรคุณได้บ้าง?
+              {t('helpCenter.heroTitle')}
             </motion.h1>
             
             <motion.p
@@ -180,7 +103,7 @@ const HelpCenterPage = () => {
               transition={{ delay: 0.2 }}
               className="text-lg text-slate-300 text-center mb-10 max-w-xl mx-auto"
             >
-              ค้นหาคำตอบ หรือเลือกหมวดหมู่ที่ต้องการด้านล่าง
+              {t('helpCenter.heroDescription')}
             </motion.p>
 
             {/* Search Bar - Glass Style */}
@@ -200,7 +123,7 @@ const HelpCenterPage = () => {
                   </div>
                   <input
                     type="text"
-                    placeholder="พิมพ์คำถามหรือปัญหาที่ต้องการ..."
+                    placeholder={t('helpCenter.searchPlaceholder')}
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                     className="w-full px-4 py-5 bg-transparent text-white placeholder-white/50 focus:outline-none"
@@ -235,8 +158,8 @@ const HelpCenterPage = () => {
                       </svg>
                     </div>
                     <div>
-                      <h3 className="text-xl md:text-2xl font-bold text-white">แจ้งปัญหา / เคลมสินค้า</h3>
-                      <p className="text-white/80 text-sm md:text-base mt-1">พบปัญหา? แจ้งเราได้ทันที รับประกันทุกออเดอร์</p>
+                      <h3 className="text-xl md:text-2xl font-bold text-white">{t('helpCenter.reportTitle')}</h3>
+                      <p className="text-white/80 text-sm md:text-base mt-1">{t('helpCenter.reportDescription')}</p>
                     </div>
                   </div>
                   <div className="w-12 h-12 md:w-14 md:h-14 rounded-full bg-white flex items-center justify-center text-[#ff2500] shadow-lg group-hover:scale-110 transition-transform">
@@ -288,7 +211,7 @@ const HelpCenterPage = () => {
               animate={{ opacity: 1, scale: 1 }}
               className="flex items-center gap-2 mb-6"
             >
-              <span className="text-slate-500">กำลังดู:</span>
+              <span className="text-slate-500">{t('helpCenter.viewing')}</span>
               <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-900 text-white font-medium">
                 {faqs.find(f => f.category === selectedCategory)?.icon}
                 {selectedCategory}
@@ -316,8 +239,8 @@ const HelpCenterPage = () => {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </div>
-              <h3 className="text-xl font-bold text-slate-800 mb-2">ไม่พบผลลัพธ์</h3>
-              <p className="text-slate-500">ลองค้นหาด้วยคำอื่น หรือติดต่อเราโดยตรง</p>
+              <h3 className="text-xl font-bold text-slate-800 mb-2">{t('helpCenter.noResults')}</h3>
+              <p className="text-slate-500">{t('helpCenter.noResultsDescription')}</p>
             </motion.div>
           ) : (
             <div className="space-y-8">
@@ -335,7 +258,7 @@ const HelpCenterPage = () => {
                     </div>
                     <div>
                       <h2 className="text-xl font-bold text-slate-900">{group.category}</h2>
-                      <p className="text-sm text-slate-500">{group.items.length} คำถาม</p>
+                      <p className="text-sm text-slate-500">{group.items.length} {t('helpCenter.questionsCount')}</p>
                     </div>
                   </div>
 
@@ -452,13 +375,13 @@ const HelpCenterPage = () => {
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-400"></span>
               </span>
-              ออนไลน์ตลอด 24 ชั่วโมง
+              {t('helpCenter.contactBadge')}
             </span>
             <h2 className="text-4xl md:text-5xl font-black text-white mb-4">
-              ยังต้องการความช่วยเหลือ?
+              {t('helpCenter.contactTitle')}
             </h2>
             <p className="text-slate-400 text-lg max-w-md mx-auto">
-              ทีมงานพร้อมช่วยเหลือคุณทุกเมื่อ ติดต่อเราได้ทันที
+              {t('helpCenter.contactDescription')}
             </p>
           </motion.div>
 
@@ -488,9 +411,9 @@ const HelpCenterPage = () => {
                   </div>
                   <div className="flex-1">
                     <h3 className="text-2xl font-bold text-white mb-2">LINE Official</h3>
-                    <p className="text-slate-400 mb-4">ตอบกลับเร็วที่สุด • SENd</p>
+                    <p className="text-slate-400 mb-4">{t('helpCenter.lineSubtitle')}</p>
                     <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#06C755] text-white font-semibold shadow-lg shadow-[#06C755]/30 group-hover:shadow-[#06C755]/50 group-hover:gap-3 transition-all duration-300">
-                      <span>แชทเลย</span>
+                      <span>{t('helpCenter.lineButton')}</span>
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7" />
                       </svg>
@@ -525,10 +448,10 @@ const HelpCenterPage = () => {
                     </svg>
                   </div>
                   <div className="flex-1">
-                    <h3 className="text-2xl font-bold text-white mb-2">อีเมล</h3>
+                    <h3 className="text-2xl font-bold text-white mb-2">{t('helpCenter.emailTitle')}</h3>
                     <p className="text-slate-400 mb-4">sendgood1990@gmail.com</p>
                     <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-gradient-to-r from-blue-500 to-cyan-400 text-white font-semibold shadow-lg shadow-blue-500/30 group-hover:shadow-blue-500/50 group-hover:gap-3 transition-all duration-300">
-                      <span>ส่งอีเมล</span>
+                      <span>{t('helpCenter.emailButton')}</span>
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7" />
                       </svg>
@@ -551,9 +474,9 @@ const HelpCenterPage = () => {
             className="flex flex-wrap justify-center gap-4 md:gap-6"
           >
             {[
-              { icon: "⚡", label: "ตอบกลับภายใน 5 นาที", gradient: "from-amber-500/20 to-orange-500/20", border: "border-amber-500/30", glow: "shadow-amber-500/20" },
-              { icon: "🕐", label: "พร้อมให้บริการ 24/7", gradient: "from-blue-500/20 to-cyan-500/20", border: "border-blue-500/30", glow: "shadow-blue-500/20" },
-              { icon: "🇹🇭", label: "ทีมงานคนไทย", gradient: "from-emerald-500/20 to-teal-500/20", border: "border-emerald-500/30", glow: "shadow-emerald-500/20" },
+              { icon: "⚡", label: t('helpCenter.stat1'), gradient: "from-amber-500/20 to-orange-500/20", border: "border-amber-500/30", glow: "shadow-amber-500/20" },
+              { icon: "🕐", label: t('helpCenter.stat2'), gradient: "from-blue-500/20 to-cyan-500/20", border: "border-blue-500/30", glow: "shadow-blue-500/20" },
+              { icon: "🇹🇭", label: t('helpCenter.stat3'), gradient: "from-emerald-500/20 to-teal-500/20", border: "border-emerald-500/30", glow: "shadow-emerald-500/20" },
             ].map((stat, i) => (
               <motion.div 
                 key={i}

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-
+import { useTranslation } from "react-i18next";
 
 import hero1 from "../assets/hero/hero-1.png";
 import hero2 from "../assets/hero/hero-2.png";
@@ -13,6 +13,7 @@ const images = [hero1, hero2, hero3, hero4, hero5];
 
 export default function Hero({ dragConstraints }: { dragConstraints?: React.RefObject<any> }) {
   const [current, setCurrent] = useState(0);
+  const { t } = useTranslation();
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -54,7 +55,7 @@ export default function Hero({ dragConstraints }: { dragConstraints?: React.RefO
       <div className="relative z-30 flex items-end md:items-center h-full py-16 pb-12 md:py-0">
         <div className="max-w-[1440px] mx-auto px-6 text-white font-extrabold flex flex-col md:flex-row items-center gap-8 md:gap-10 font-poppins w-full justify-center">
           <h1 className="text-3xl sm:text-4xl md:text-6xl font-extrabold font-en text-center md:text-left leading-tight drop-shadow-md">
-           "SENd คืนเวลาความสุขให้คุณ"
+           {t('hero.slogan')}
           </h1>
           </div>
 

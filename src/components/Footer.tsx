@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import logo from "../assets/logos/send-logo2.png";
 import { useEffect, useState } from "react";
 
@@ -12,6 +13,7 @@ import { Link } from "react-router-dom";
 
 const Footer = () => {
   const [isMobile, setIsMobile] = useState(false);
+  const { t } = useTranslation();
 
   useEffect(() => {
     // Simple check for mobile devices
@@ -39,9 +41,7 @@ const Footer = () => {
             </div>
 
             <p className="text-sm leading-relaxed text-gray-400 max-w-[340px] mb-6">
-              แพลตฟอร์มบริการรับ–ส่งซักอบผ้า
-              <br />
-              ที่ช่วยคืนเวลาความสุขให้คุณในทุกวัน
+              {t('footer.description')}
             </p>
 
             {/* APP STORE */}
@@ -65,36 +65,36 @@ const Footer = () => {
 
           {/* ABOUT */}
           <div>
-            <h4 className="text-white font-semibold mb-4">เกี่ยวกับ</h4>
+            <h4 className="text-white font-semibold mb-4">{t('footer.aboutTitle')}</h4>
             <ul className="space-y-3 text-sm">
               <li>
-                <Link to="/about" className="hover:text-white transition">เกี่ยวกับเรา</Link>
+                <Link to="/about" className="hover:text-white transition">{t('footer.aboutUs')}</Link>
               </li>
               <li>
-                <Link to="/announcement" className="hover:text-white transition">ข่าวสาร & โปรโมชั่น</Link>
+                <Link to="/announcement" className="hover:text-white transition">{t('footer.newsPromo')}</Link>
               </li>
               <li>
-                <Link to="/blog" className="hover:text-white transition">บทความ/ทริคซักผ้า</Link>
+                <Link to="/blog" className="hover:text-white transition">{t('footer.blog')}</Link>
               </li>
             </ul>
           </div>
 
           {/* USER */}
           <div>
-            <h4 className="text-white font-semibold mb-4">ผู้ใช้งาน</h4>
+            <h4 className="text-white font-semibold mb-4">{t('footer.userTitle')}</h4>
             <ul className="space-y-3 text-sm">
               <li>
-                <a href="https://apps.apple.com/us/app/send-delivery/id6474961079" target="_blank" rel="noopener noreferrer" className="hover:text-white transition">ดาวน์โหลดแอป</a>
+                <a href="https://apps.apple.com/us/app/send-delivery/id6474961079" target="_blank" rel="noopener noreferrer" className="hover:text-white transition">{t('footer.downloadApp')}</a>
               </li>
               <li>
-                <Link to="/help-center" className="hover:text-white transition">ศูนย์ช่วยเหลือ</Link>
+                <Link to="/help-center" className="hover:text-white transition">{t('footer.helpCenter')}</Link>
               </li>
             </ul>
           </div>
 
           {/* CONTACT */}
           <div>
-            <h4 className="text-white font-semibold mb-4">ติดต่อเรา</h4>
+            <h4 className="text-white font-semibold mb-4">{t('footer.contactTitle')}</h4>
 
             {/* SOCIAL */}
             <div className="flex gap-4">
@@ -152,10 +152,10 @@ const Footer = () => {
           {/* LEGAL */}
           <div className="flex gap-6 text-white/90">
             <Link to="/privacy" className="hover:underline cursor-pointer">
-              นโยบายความเป็นส่วนตัว
+              {t('footer.privacy')}
             </Link>
             <Link to="/terms" className="hover:underline cursor-pointer">
-              ข้อกำหนดในการให้บริการ
+              {t('footer.terms')}
             </Link>
           </div>
         </div>

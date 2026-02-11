@@ -4,7 +4,20 @@
 
 ---
 
-## 🛠️ สิ่งที่ต้องมีในเครื่อง (Prerequisites)
+## 🛠️ เทคโนโลยีที่ใช้ (Tech Stack)
+
+โปรเจคนี้พัฒนาโดยใช้เครื่องมือและไลบรารีที่ทันสมัย ดังนี้:
+
+- **Core:** React 19, TypeScript, Vite
+- **Styling:** TailwindCSS v4, Framer Motion (Animation)
+- **State & Logic:** React Hook Form, Zod (Validation), i18next (Multi-language)
+- **Database & Backend:** Supabase
+- **Maps:** Leaflet, React Leaflet
+- **Icons:** Lucide React
+
+---
+
+## 📋 สิ่งที่ต้องมีในเครื่อง (Prerequisites)
 
 ก่อนเริ่มใช้งาน ต้องติดตั้งโปรแกรมเหล่านี้ก่อน:
 
@@ -14,17 +27,17 @@
 
 ---
 
-## 🚀 คำสั่งสำหรับเริ่มโปรเจค (Getting Started)
+## 🚀 วิธีติดตั้งและรันโปรเจค (Installation & Usage)
 
 ### 1. ติดตั้ง Dependencies (ครั้งแรกเท่านั้น)
 
-ให้เปิด Terminal ในโฟลเดอร์โปรเจค แล้วพิมพ์คำสั่ง:
+เปิด Terminal ในโฟลเดอร์โปรเจค แล้วพิมพ์คำสั่ง:
 
 ```bash
 npm install
 ```
 
-_(คำสั่งนี้จะโหลด `node_modules` ที่จำเป็นทั้งหมดมาให้)_
+_(คำสั่งนี้จะโหลดไลบรารีที่จำเป็นทั้งหมดมาให้)_
 
 ### 2. รันเว็บในเครื่อง (โหมดพัฒนา)
 
@@ -34,7 +47,7 @@ _(คำสั่งนี้จะโหลด `node_modules` ที่จำ�
 npm run dev
 ```
 
-แล้วกดเปิดลิงค์ `http://localhost:5173/` ใน Web Browser
+แล้วกดเปิดลิงค์ `http://localhost:5173/` ใน Web Browser ได้เลย
 
 ---
 
@@ -50,58 +63,12 @@ npm run build
 
 ---
 
-## ⚙️ การตั้งค่าระบบ (Configuration)
-
-โปรเจคนี้มีการใช้งาน Environment Variable เพื่อความปลอดภัย (เช่น API Keys)
-**ให้ทำการสร้างไฟล์ `.env` ที่ root ของโปรเจค** โดย copy จาก `.env.example` แล้วใส่ค่าจริงดังนี้:
-
-````env
-# URL ของ Google Sheet (CSV) สำหรับประกาศ
-VITE_GOOGLE_SHEET_CSV_URL=ใส่ลิงก์_Google_Sheet_CSV_ที่นี่
-
-> **ข้อควรระวัง:** ห้ามนำไฟล์ `.env` ที่มี Key จริงขึ้น Git เด็ดขาด (มี `.gitignore` ป้องกันไว้แล้ว)
-
-**สำหรับ Deploy (Production):**
-ให้นำค่าตัวแปรเหล่านี้ไปตั้งค่าใน Environment Variables ของ Server ที่ใช้งาน (เช่น Vercel, Netlify dashboard)
-
----
-
-## 🐙 คำสั่ง Git (สำหรับอัพโหลดโค้ดขึ้น GitHub)
-
-**การตั้งค่าครั้งแรก (ทำแค่ครั้งเดียว):**
-
-```bash
-git init
-git add .
-git commit -m "First commit"
-git branch -M main
-git remote add origin <URL_ของ_Repo_คุณ>
-git push -u origin main
-````
-
-**การอัพเดทโค้ดในครั้งถัดๆ ไป:**
-เมื่อมีการแก้ไขโค้ด ให้ทำตาม step นี้:
-
-1.  **เก็บไฟล์:**
-    ```bash
-    git add .
-    ```
-2.  **ตั้งชื่อการเปลี่ยนแปลง:**
-    ```bash
-    git commit -m "อธิบายสิ่งที่แก้ไขสั้นๆ"
-    ```
-3.  **ส่งขึ้น GitHub:**
-    ```bash
-    git push
-    ```
-
----
-
 ## 📂 โครงสร้างโปรเจค (Project Structure)
 
 - `src/` - โค้ดทั้งหมดของเว็บ
   - `components/` - ชิ้นส่วนย่อยๆ ของหน้าเว็บ (เช่น Navbar, ปุ่ม, การ์ด)
   - `pages/` - หน้าหลักแต่ละหน้า (Home, About, LaundryPage ฯลฯ)
   - `assets/` - รูปภาพและไฟล์อื่นๆ
+  - `lib/` - ไฟล์ config ต่างๆ (เช่น supabase.ts)
   - `App.tsx` - จุดเริ่มต้นหลักของแอป
 - `public/` - ไฟล์สาธารณะ (เช่น favicon)
