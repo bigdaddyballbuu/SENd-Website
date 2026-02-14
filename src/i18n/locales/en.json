@@ -73,8 +73,7 @@
     "locationError": "Unable to detect your location\n(Please enable GPS or allow location access)\n\nShowing stores in \"Sisaket\" as default"
   },
   "appPreview": {
-    "title": "SENd Delivery",
-    "subtitle": "Laundry pickup & delivery designed for every lifestyle",
+    "title": "SENd Service",
     "slide1Title": "Home Pickup",
     "slide1Desc": "Request pickup instantly - convenient, fast, no need to leave home",
     "slide2Title": "Real-time Tracking",

@@ -32,62 +32,6 @@ const slideThemes = [
 
 
 /* =======================
-   WATER WAVES
-======================= */
-
-const WaterWaves = ({ color }: { color: string }) => {
-  return (
-    <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
-      {/* Wave 1 */}
-      <motion.svg
-        className="absolute bottom-0 left-0 w-[200%] h-[260px]"
-        viewBox="0 0 1440 320"
-        preserveAspectRatio="none"
-        animate={{ x: [0, -200, 0] }}
-        transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
-      >
-        <path
-          fill={color}
-          fillOpacity="0.45"
-          d="M0,192L48,176C96,160,192,128,288,144C384,160,480,224,576,240C672,256,768,224,864,202.7C960,181,1056,171,1152,160C1248,149,1344,139,1392,134.7L1440,128L1440,320L0,320Z"
-        />
-      </motion.svg>
-
-      {/* Wave 2 */}
-      <motion.svg
-        className="absolute bottom-0 left-0 w-[200%] h-[300px] blur-sm"
-        viewBox="0 0 1440 320"
-        preserveAspectRatio="none"
-        animate={{ x: [0, 150, 0] }}
-        transition={{ duration: 26, repeat: Infinity, ease: "linear" }}
-      >
-        <path
-          fill={color}
-          fillOpacity="0.3"
-          d="M0,224L60,213.3C120,203,240,181,360,170.7C480,160,600,160,720,170.7C840,181,960,203,1080,197.3C1200,192,1320,160,1380,144L1440,128L1440,320L0,320Z"
-        />
-      </motion.svg>
-
-      {/* Wave 3 */}
-      <motion.svg
-        className="absolute bottom-0 left-0 w-[200%] h-[340px] blur-md"
-        viewBox="0 0 1440 320"
-        preserveAspectRatio="none"
-        animate={{ x: [0, -100, 0] }}
-        transition={{ duration: 32, repeat: Infinity, ease: "linear" }}
-      >
-        <path
-          fill={color}
-          fillOpacity="0.2"
-          d="M0,256L80,240C160,224,320,192,480,176C640,160,800,160,960,176C1120,192,1280,224,1360,240L1440,256L1440,320L0,320Z"
-        />
-      </motion.svg>
-    </div>
-  );
-};
-
-
-/* =======================
    BUBBLE
 ======================= */
 
@@ -145,7 +89,7 @@ const AppPreview = () => {
   };
 
   useEffect(() => {
-    const timer = setInterval(() => paginate(1), 3200);
+    const timer = setInterval(() => paginate(1), 5000);
     return () => clearInterval(timer);
   }, [current]);
 
@@ -165,14 +109,18 @@ const AppPreview = () => {
         <motion.div
           key={bgIndex}
           className="absolute inset-0 -z-10"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 0.8 }}
+          initial={{ opacity: 0, scale: 1.0 }}
+          animate={{ opacity: 0.8, scale: 1.15 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 2, ease: "easeInOut" }}
+          transition={{
+            opacity: { duration: 2, ease: "easeInOut" },
+            scale: { duration: 10, ease: "linear" },
+          }}
           style={{
             backgroundImage: `url('${bgImages[bgIndex]}')`,
             backgroundSize: 'cover',
             backgroundPosition: 'center',
+            filter: 'blur(0.5px)',
           }}
         />
       </AnimatePresence>
@@ -182,11 +130,9 @@ const AppPreview = () => {
         style={{
           background: 'linear-gradient(to bottom, rgba(255,255,255,1) 0%, rgba(255,255,255,0.8) 20%, rgba(255,255,255,0) 100%)',
           maskImage: 'linear-gradient(to bottom, black 0%, black 20%, transparent 100%)',
-          WebkitMaskImage: 'linear-gradient(to bottom, black 0%, black 20%, transparent 90%)',
+          WebkitMaskImage: 'linear-gradient(to bottom, black 0%, black 10%, transparent 90%)',
         }}
       />
-      
-      <WaterWaves color={slideThemes[current].wave} />
 
       {/* 🫧 Bubbles */}
       <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
@@ -204,13 +150,10 @@ const AppPreview = () => {
         <h1 className="text-3xl md:text-4xl font-extrabold bg-gradient-to-r from-red-600 via-orange-500 to-red-600 bg-[length:200%_auto] bg-clip-text text-transparent animate-gradient mb-6">
           {t('appPreview.title')}
         </h1>
-        <p className="text-white max-w-[520px] mx-auto" style={{textShadow: '1px 1px 2px rgba(47, 47, 47, 0.8), -1px -1px 2px rgba(45, 45, 45, 0.8)'}}>
-          {t('appPreview.subtitle')}
-        </p>
       </div>
 
-      {/* Slider */}
-      <div className="relative z-10 flex justify-center items-center h-[420px]">
+       {/* Slider */}
+      <div className="relative z-10 flex justify-center items-center h-[420px] cursor-grab active:cursor-grabbing">
         {/* Glow Effect */}
         <motion.div
            key={`glow-${current}`}
@@ -227,19 +170,30 @@ const AppPreview = () => {
             alt="App preview"
             className="absolute w-[220px] drop-shadow-xl"
             custom={direction}
-            initial={{ x: direction > 0 ? 140 : -140, opacity: 0, scale: 0.9, y: 0 }}
-            animate={{ 
-              x: 0, 
-              opacity: 1, 
-              scale: 1,
-              y: [0, -15, 0], // Floating Effect
+            drag="x"
+            dragConstraints={{ left: 0, right: 0 }}
+            dragElastic={0.3}
+            onDragEnd={(_e, { offset, velocity }) => {
+              const swipe = Math.abs(offset.x) * velocity.x;
+              if (offset.x < -50 || swipe < -500) {
+                paginate(1);
+              } else if (offset.x > 50 || swipe > 500) {
+                paginate(-1);
+              }
             }}
-            exit={{ x: direction > 0 ? -140 : 140, opacity: 0, scale: 0.9 }}
+            initial={{ scale: 0.5, opacity: 0 }}
+            animate={{ 
+              scale: 1, 
+              opacity: 1,
+              x: 0,
+              y: [0, -15, 0],
+            }}
+            exit={{ x: direction > 0 ? -120 : 120, opacity: 0, scale: 0.85 }}
             transition={{ 
-              x: { type: "spring", stiffness: 70, damping: 20 },
-              opacity: { duration: 0.5 },
-              scale: { duration: 0.5 },
-              y: { duration: 4, repeat: Infinity, ease: "easeInOut" }, // Floating transition
+              scale: { type: "spring", stiffness: 80, damping: 18 },
+              opacity: { duration: 0.8 },
+              x: { duration: 1.0, ease: "easeIn" },
+              y: { duration: 4, repeat: Infinity, ease: "easeInOut" },
             }}
           />
         </AnimatePresence>
