@@ -33,7 +33,7 @@ export default function Hero({ dragConstraints }: { dragConstraints?: React.RefO
         >
       
       {/* Clipped Background Wrapper */}
-      <div className="absolute inset-0 w-full h-full [clip-path:ellipse(150%_100%_at_-10%_-1%)] md:[clip-path:ellipse(65%_100%_at_40%_0%)] z-0">
+      <div className="absolute inset-0 w-full h-full [clip-path:ellipse(160%_100%_at_-10%_-1%)] md:[clip-path:ellipse(65%_100%_at_40%_0%)] z-0">
         {/* background image slider */}
         <div className="absolute inset-0 overflow-hidden bg-red-900">
           <AnimatePresence mode="popLayout">
