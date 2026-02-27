@@ -33,7 +33,7 @@ export default function Hero({ dragConstraints }: { dragConstraints?: React.RefO
         >
       
       {/* Clipped Background Wrapper */}
-      <div className="absolute inset-0 w-full h-full [clip-path:ellipse(65%_100%_at_40%_0%)] z-0">
+      <div className="absolute inset-0 w-full h-full [clip-path:ellipse(150%_100%_at_-10%_-1%)] md:[clip-path:ellipse(65%_100%_at_40%_0%)] z-0">
         {/* background image slider */}
         <div className="absolute inset-0 overflow-hidden bg-red-900">
           <AnimatePresence mode="popLayout">
@@ -65,14 +65,14 @@ export default function Hero({ dragConstraints }: { dragConstraints?: React.RefO
           </h1>
           </div>
 
-          <div className="flex justify-center w-full md:w-auto mt-4 md:mt-0 pointer-events-auto">
+          <div className="flex justify-center w-full md:w-auto mt-8 md:mt-0 pointer-events-auto">
             <motion.img
               src={bike}
               drag
               dragConstraints={dragConstraints}
               whileDrag={{ rotate: 8, scale: 1.02 }}
               dragElastic={0.15}
-              className="w-[100%] sm:w-full max-w-sm md:max-w-3xl lg:max-w-5xl object-contain drop-shadow-2xl z-50 relative"
+              className="w-[120%] sm:w-full max-w-[450px] md:max-w-3xl lg:max-w-5xl object-contain drop-shadow-2xl z-50 relative translate-y-15 md:translate-y-0"
             />
 
           </div>
