@@ -67,9 +67,9 @@ export default function Navbar() {
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.3, ease: "easeOut" }}
-            className="md:hidden bg-slate-900 text-white"
+            className="absolute top-[62px] left-0 w-full md:hidden bg-slate-900 text-white shadow-xl border-t border-slate-700 overflow-hidden z-40"
           >
-            <div className="px-6 py-6 flex flex-col gap-4 text-base">
+            <div className="px-6 py-6 flex flex-col gap-5 text-base font-medium">
               <Link onClick={() => setOpen(false)} to="/" className="navbar-link">
                 {t('navbar.home')}
               </Link>
