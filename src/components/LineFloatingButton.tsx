@@ -1,11 +1,11 @@
 // LINE Floating Button Component - Official LINE Style
 
-// ใส่ URL LINE ของคุณ
-const LINE_URL = "https://line.me/R/ti/p/@098neegh";
+// URL LINE เริ่มต้น
+const DEFAULT_LINE_URL = "https://line.me/R/ti/p/@098neegh";
 
-const LineFloatingButton = () => {
+const LineFloatingButton = ({ url }: { url?: string }) => {
   const handleClick = () => {
-    window.open(LINE_URL, '_blank');
+    window.open(url || DEFAULT_LINE_URL, '_blank');
   };
 
   return (

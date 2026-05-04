@@ -11,14 +11,15 @@ import { useToast } from "../hooks/use-toast";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { supabase } from "../lib/supabase";
 
 // Assets
 import bgImage from "../assets/images/washer.png";
 import scooterImage from "../assets/hero/bike.png";
-import { stores } from "./LaundryPage";
 import LineFloatingButton from "../components/LineFloatingButton";
+import SEO from "../components/SEO";
 
-const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx-k5yX-bhFBLN9ybuh20XeYM6Yt-mpWrN9BNQg1QZP-mRsZ9HaGla-acbIvnCqQU7GJQ/exec";
+const GOOGLE_SCRIPT_URL = import.meta.env.VITE_GOOGLE_SCRIPT_URL;
 
 // --- Types & Schema ---
 
@@ -769,6 +770,48 @@ const SuccessView = ({ existingClaim, onClear, onRefresh, loadingStatus }: { exi
                      </button>
                 </div>
 
+                {/* 📲 LINE Notification CTA */}
+                {existingClaim.status !== 'สำเร็จ' && existingClaim.status !== 'completed' &&
+                 existingClaim.status !== 'ปฏิเสธ' && existingClaim.status !== 'rejected' &&
+                 existingClaim.status !== 'ยกเลิก' && (
+                  <div className="mt-6 mb-6 bg-[#06C755]/10 border border-[#06C755]/20 rounded-2xl p-5 max-w-md mx-auto">
+                    <div className="flex items-center gap-3 mb-3">
+                      <div className="w-10 h-10 bg-[#06C755] rounded-full flex items-center justify-center shrink-0">
+                        <svg viewBox="0 0 24 24" className="w-6 h-6 text-white" fill="currentColor">
+                          <path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.627-.63h2.386c.349 0 .63.285.63.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.627-.63.349 0 .631.285.631.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.281.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314"/>
+                        </svg>
+                      </div>
+                      <div className="text-left">
+                        <p className="font-bold text-slate-800 text-sm">รับแจ้งเตือนผ่าน LINE</p>
+                        <p className="text-xs text-slate-500">ส่ง Ticket ID ในแชท LINE เพื่อรับอัปเดตอัตโนมัติ</p>
+                      </div>
+                    </div>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => {
+                          navigator.clipboard.writeText(existingClaim.ticketId);
+                          toast({ title: "คัดลอก Ticket ID แล้ว", description: "วางในแชท LINE เพื่อลงทะเบียนรับแจ้งเตือน" });
+                        }}
+                        className="flex-1 px-3 py-2.5 bg-white border border-slate-200 text-slate-700 rounded-xl text-sm font-medium hover:bg-slate-50 transition-colors flex items-center justify-center gap-2"
+                      >
+                        <Copy className="w-4 h-4" />
+                        คัดลอก Ticket ID
+                      </button>
+                      <a
+                        href="https://line.me/R/ti/p/@536bbhuw"
+                        target="_blank"
+                        rel="noreferrer"
+                        className="flex-1 px-3 py-2.5 bg-[#06C755] text-white rounded-xl text-sm font-medium hover:bg-[#00B849] transition-colors flex items-center justify-center gap-2"
+                      >
+                        <svg viewBox="0 0 24 24" className="w-4 h-4" fill="currentColor">
+                          <path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.627-.63h2.386c.349 0 .63.285.63.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.627-.63.349 0 .631.285.631.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.281.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314"/>
+                        </svg>
+                        เปิด LINE
+                      </a>
+                    </div>
+                  </div>
+                )}
+
             {/* Actions */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
@@ -798,10 +841,50 @@ const SuccessView = ({ existingClaim, onClear, onRefresh, loadingStatus }: { exi
     );
   };
     
+const compressImage = (file: File): Promise<File> => {
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = (e) => {
+      const img = new Image();
+      img.src = e.target?.result as string;
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        let { width, height } = img;
+        const MAX_SIZE = 1200; // ลดขนาดให้ไม่เกิน 1200px (ไฟล์จะได้เล็กกว่า 1MB ตามกฎของ LINE API)
+
+        if (width > height && width > MAX_SIZE) {
+          height *= MAX_SIZE / width;
+          width = MAX_SIZE;
+        } else if (height > MAX_SIZE) {
+          width *= MAX_SIZE / height;
+          height = MAX_SIZE;
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx?.drawImage(img, 0, 0, width, height);
+
+        canvas.toBlob((blob) => {
+          if (blob) {
+            resolve(new File([blob], file.name, { type: 'image/jpeg', lastModified: Date.now() }));
+          } else {
+            resolve(file);
+          }
+        }, 'image/jpeg', 0.7);
+      };
+      img.onerror = () => resolve(file);
+    };
+    reader.onerror = () => resolve(file);
+  });
+};
+
 const ProductClaimPage = () => {
   const [step, setStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [imagePreview, setImagePreview] = useState<string[]>([]);
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   
   // Claim Status Logic
   const [existingClaim, setExistingClaim] = useState<ClaimData | null>(null);
@@ -810,16 +893,17 @@ const ProductClaimPage = () => {
   // Claim History
   const [claimHistory, setClaimHistory] = useState<ClaimData[]>([]);
   const [showHistory, setShowHistory] = useState(false);
+  const [stores, setStores] = useState<{id: string, name: string}[]>([]);
 
   const { toast } = useToast();
+
+  const today = new Date().toLocaleDateString('en-CA');
 
   const {
     register,
     handleSubmit,
-    setValue,
     watch,
     trigger,
-
     formState: { errors },
   } = useForm<FormData>({
     resolver: zodResolver(formSchema),
@@ -828,7 +912,7 @@ const ProductClaimPage = () => {
       phone: "",
       email: "",
       problem: "",
-      date: "",
+      date: today,
       shop_branch: "",
       image_base64: [],
       others: "",
@@ -840,6 +924,17 @@ const ProductClaimPage = () => {
 
   // Load existing claim and history from local storage
   useEffect(() => {
+    // Fetch stores
+    const fetchStores = async () => {
+      try {
+        const { data } = await supabase.from('stores').select('id, name').order('name');
+        if (data) setStores(data);
+      } catch (error) {
+        console.error("Error fetching stores:", error);
+      }
+    };
+    fetchStores();
+
     // Load current claim
     const saved = localStorage.getItem('send_claim_data');
     if (saved) {
@@ -882,9 +977,13 @@ const ProductClaimPage = () => {
   const checkStatus = async (ticketId: string, isAuto = false) => {
     if (!isAuto) setLoadingStatus(true);
     try {
-        // Fetch status from Google Script
-        const response = await fetch(`${GOOGLE_SCRIPT_URL}?action=check_status&ticketId=${ticketId}`);
-        const data = await response.json();
+        const { data, error } = await supabase
+          .from('claims')
+          .select('status, custom_estimate, rejection_reason')
+          .eq('ticket_id', ticketId)
+          .single();
+          
+        if (error) throw error;
         
         if (data && data.status) {
             const prevStatus = existingClaim?.status;
@@ -950,17 +1049,12 @@ const ProductClaimPage = () => {
 
     if (validFiles.length === 0) return;
 
-    const newImages = await Promise.all(
-      validFiles.map(file => new Promise<string>(resolve => {
-        const reader = new FileReader();
-        reader.onloadend = () => resolve(reader.result as string);
-        reader.readAsDataURL(file);
-      }))
-    );
+    // บีบอัดรูปภาพให้ขนาดเล็กกว่า 1MB เพื่อให้ LINE API ยอมรับ
+    const compressedFiles = await Promise.all(validFiles.map(file => compressImage(file)));
+    const newPreviews = compressedFiles.map(file => URL.createObjectURL(file));
 
-    const allImages = [...imagePreview, ...newImages];
-    setImagePreview(allImages);
-    setValue("image_base64", allImages);
+    setImagePreview(prev => [...prev, ...newPreviews]);
+    setSelectedFiles(prev => [...prev, ...compressedFiles]);
   };
 
   const handleNextStep = async () => {
@@ -988,14 +1082,61 @@ const ProductClaimPage = () => {
     const ticketId = generateTicketId();
 
     try {
-      // Prepare payload with Ticket ID
+      // 1. Upload Images to Supabase Storage
+      let uploadedUrls: string[] = [];
+      if (selectedFiles.length > 0) {
+        const uploadPromises = selectedFiles.map(async (file) => {
+          const fileExt = file.name.split('.').pop();
+          const fileName = `${Math.random()}.${fileExt}`;
+          const filePath = `${ticketId}/${fileName}`;
+
+          const { error: uploadError } = await supabase.storage
+            .from('claim-images')
+            .upload(filePath, file);
+
+          if (uploadError) {
+            console.error("Upload error:", uploadError);
+            throw uploadError;
+          }
+
+          const { data: publicUrlData } = supabase.storage
+            .from('claim-images')
+            .getPublicUrl(filePath);
+
+          return publicUrlData.publicUrl;
+        });
+
+        uploadedUrls = await Promise.all(uploadPromises);
+      }
+
+      // 2. Save to Supabase Database
+      const { error: supabaseError } = await supabase.from('claims').insert([{
+        ticket_id: ticketId,
+        status: 'รับเรื่องแล้ว',
+        name: data.name,
+        phone: data.phone,
+        email: data.email,
+        problem: data.problem === 'อื่นๆ' ? data.others : data.problem,
+        incident_date: data.date,
+        branch: data.shop_branch,
+        details: data.others,
+        consent: data.consent,
+        image_urls: uploadedUrls
+      }]);
+
+      if (supabaseError) throw supabaseError;
+
       const payload = {
         ...data,
+        others: data.others, // กลับมาส่งเฉพาะข้อความปัญหา
+        image_base64: [], 
+        uploadedUrls: uploadedUrls, // ส่งอาเรย์ลิงก์ให้ Google Script รับไปจัดการ
         ticketId,
         status: 'รับเรื่องแล้ว',
         timestamp: new Date().toISOString()
       };
 
+      // 2. Send to LINE Webhook (Google Apps Script)
       // ใช้ no-cors mode จะได้ opaque response
       // ถ้า fetch สำเร็จ (ไม่มี network error) ถือว่าส่งได้
       await fetch(
@@ -1086,9 +1227,14 @@ const ProductClaimPage = () => {
     // ถ้ากด Cancel (reason === null) ไม่ดำเนินการ
     if (reason === null) return;
     
-    // ส่งเหตุผลไปยัง API
+    // ส่งเหตุผลไปยัง API และอัปเดต Supabase
     if (existingClaim) {
       try {
+        await supabase
+          .from('claims')
+          .update({ status: 'ยกเลิก' })
+          .eq('ticket_id', existingClaim.ticketId);
+
         await fetch(GOOGLE_SCRIPT_URL, {
           method: 'POST',
           mode: 'no-cors',
@@ -1128,6 +1274,7 @@ const ProductClaimPage = () => {
   // Otherwise show form
   return (
     <>
+    <SEO title="แจ้งเคลมสินค้า" description="แจ้งปัญหาเคลมสินค้าออนไลน์ ติดตามสถานะแบบ Real-time พร้อมรับแจ้งเตือนผ่าน LINE" path="/claim" />
     <div className="min-h-screen bg-[#F8F9FB]">
         
       <HeroSection />
@@ -1671,9 +1818,10 @@ const ProductClaimPage = () => {
                             <button
                               type="button"
                               onClick={() => {
-                                const updated = imagePreview.filter((_, i) => i !== index);
-                                setImagePreview(updated);
-                                setValue("image_base64", updated);
+                                const updatedPreview = imagePreview.filter((_, i) => i !== index);
+                                const updatedFiles = selectedFiles.filter((_, i) => i !== index);
+                                setImagePreview(updatedPreview);
+                                setSelectedFiles(updatedFiles);
                               }}
                               className="absolute top-2 right-2 p-1.5 rounded-full bg-red-500 text-white hover:bg-red-600 transition-colors shadow-sm"
                             >
@@ -1770,7 +1918,7 @@ const ProductClaimPage = () => {
     </div>
     
     {/* ปุ่มลอย LINE */}
-    <LineFloatingButton />
+    <LineFloatingButton url="https://line.me/R/ti/p/@536bbhuw" />
     </>
   );
 };

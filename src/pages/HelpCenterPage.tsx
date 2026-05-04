@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import bgAnnouncement from "../assets/bg/bg-help2.png";
 import { useTranslation } from "react-i18next";
+import SEO from "../components/SEO";
 
 /* =========================
    FAQ DATA CONFIG (icons & gradients only)
@@ -54,6 +55,7 @@ const HelpCenterPage = () => {
 
   return (
     <div className="min-h-screen bg-slate-950">
+      <SEO title="ศูนย์ช่วยเหลือ" description="คำถามที่พบบ่อย วิธีใช้งาน SENd แอปซักอบ การชำระเงิน และการแจ้งปัญหา" path="/help-center" />
       
       {/* ==================== HERO SECTION ==================== */}
       <div className="relative overflow-hidden">
@@ -132,38 +134,62 @@ const HelpCenterPage = () => {
               </div>
             </motion.div>
 
-            {/* Report Issue Card - In Hero */}
+            {/* Action Cards - In Hero */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4 }}
-              className="max-w-3xl mx-auto"
+              className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-4"
             >
+              {/* Report Issue Card */}
               <Link 
                 to="/claim"
-                className="group relative block overflow-hidden rounded-3xl bg-gradient-to-r from-[#ff2500] to-[#ff6b35] p-6 md:p-8 shadow-2xl shadow-orange-500/30"
+                className="group relative block overflow-hidden rounded-3xl bg-gradient-to-r from-[#ff2500] to-[#ff6b35] p-6 shadow-2xl shadow-orange-500/30"
               >
-                {/* Shine Effect */}
                 <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 bg-gradient-to-r from-transparent via-white/20 to-transparent" />
-                
                 <div className="relative flex items-center justify-between">
-                  <div className="flex items-center gap-5">
-                    <div className="w-16 h-16 md:w-20 md:h-20 rounded-2xl bg-white/20 backdrop-blur flex items-center justify-center">
-                      <svg className="w-8 h-8 md:w-10 md:h-10 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        {/* T-shirt shape */}
+                  <div className="flex items-center gap-4">
+                    <div className="w-14 h-14 rounded-2xl bg-white/20 backdrop-blur flex items-center justify-center">
+                      <svg className="w-7 h-7 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                         <path d="M20.38 3.46L16 2a4 4 0 01-8 0L3.62 3.46a2 2 0 00-1.34 2.23l.58 3.47a1 1 0 00.99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 002-2V10h2.15a1 1 0 00.99-.84l.58-3.47a2 2 0 00-1.34-2.23z" />
-                        {/* Exclamation mark */}
                         <line x1="12" y1="9" x2="12" y2="13" strokeWidth="2.5" />
                         <circle cx="12" cy="16" r="0.5" fill="currentColor" strokeWidth="2" />
                       </svg>
                     </div>
                     <div>
-                      <h3 className="text-xl md:text-2xl font-bold text-white">{t('helpCenter.reportTitle')}</h3>
-                      <p className="text-white/80 text-sm md:text-base mt-1">{t('helpCenter.reportDescription')}</p>
+                      <h3 className="text-xl font-bold text-white">{t('helpCenter.reportTitle')}</h3>
+                      <p className="text-white/80 text-sm mt-1">{t('helpCenter.reportDescription')}</p>
                     </div>
                   </div>
-                  <div className="w-12 h-12 md:w-14 md:h-14 rounded-full bg-white flex items-center justify-center text-[#ff2500] shadow-lg group-hover:scale-110 transition-transform">
-                    <svg className="w-6 h-6 md:w-7 md:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-[#ff2500] shadow-lg group-hover:scale-110 transition-transform">
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7" />
+                    </svg>
+                  </div>
+                </div>
+              </Link>
+
+              {/* Track Status Card */}
+              <Link 
+                to="/track"
+                className="group relative block overflow-hidden rounded-3xl bg-gradient-to-r from-blue-600 to-cyan-500 p-6 shadow-2xl shadow-blue-500/30"
+              >
+                <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+                <div className="relative flex items-center justify-between">
+                  <div className="flex items-center gap-4">
+                    <div className="w-14 h-14 rounded-2xl bg-white/20 backdrop-blur flex items-center justify-center">
+                      <svg className="w-7 h-7 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <circle cx="11" cy="11" r="8" />
+                        <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                      </svg>
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-bold text-white">ติดตามสถานะเคลม</h3>
+                      <p className="text-white/80 text-sm mt-1">ตรวจสอบความคืบหน้าของงานเคลมของคุณ</p>
+                    </div>
+                  </div>
+                  <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-blue-600 shadow-lg group-hover:scale-110 transition-transform">
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7" />
                     </svg>
                   </div>
@@ -390,7 +416,7 @@ const HelpCenterPage = () => {
             
             {/* LINE Card */}
             <motion.a
-              href="https://line.me/R/ti/p/@098neegh"
+              href="https://line.me/R/ti/p/@536bbhuw"
               target="_blank"
               rel="noopener noreferrer"
               initial={{ opacity: 0, y: 20 }}

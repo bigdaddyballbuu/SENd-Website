@@ -4,13 +4,16 @@ import { MapContainer, TileLayer, Marker, Popup, useMapEvents, useMap } from "re
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import { useTranslation } from "react-i18next";
+import { supabase } from "../lib/supabase";
+import SEO from "../components/SEO";
 
-// Hero background image
+// พื้นหลัง Hero
 import laundryHeroBg from "../assets/bg/bg-maps.png";
 
-// Fix for default marker icon
+// ไอคอน
 import icon from "leaflet/dist/images/marker-icon.png";
 import iconShadow from "leaflet/dist/images/marker-shadow.png";
+import markerLogo from "../assets/logos/send-logo2.png";
 
 let DefaultIcon = L.icon({
   iconUrl: icon,
@@ -19,7 +22,7 @@ let DefaultIcon = L.icon({
   iconAnchor: [12, 41],
 });
 
-// Custom Icon Generator function
+// สร้างไอคอน
 const createStoreIcon = (logo: string) => {
   return L.divIcon({
     className: "custom-store-marker",
@@ -82,8 +85,8 @@ export interface Store {
   lat: number;
   lng: number;
   isCombo?: boolean;
-  province: "sisaket" | "ubon"; // จังหวัด
-  district?: "mueang" | "warin"; // อำเภอ (สำหรับอุบลฯ)
+  province: string; // จังหวัด
+  district?: string; // อำเภอ (สำหรับอุบลฯ)
 }
 
 // Province configuration
@@ -97,763 +100,6 @@ const districts = {
   mueang: { name: "อำเภอเมืองอุบล", center: [15.2287, 104.8567] as [number, number] },
   warin: { name: "อำเภอวารินชำราบ", center: [15.1650, 104.8600] as [number, number] },
 };
-
-/* =========================
-   MOCK DATA
-========================= */
-import otteriLogo from "../assets/logos/otteri2.png";
-import laundrybarLogo from "../assets/logos/laundrybar2.png";
-import kireiLogo from "../assets/logos/kirei2.png";
-import maruLogo from "../assets/logos/maru2.png";
-import washenjoyLogo from "../assets/logos/washenjoy2.png";
-import washmeticLogo from "../assets/logos/washmetic2.png";
-import duckwashLogo from "../assets/logos/duckwash2.png";
-import websiteLogo from "../assets/logos/send-logo2.png";
-import washxpressLogo from "../assets/logos/washxpress2.png";
-import codecleanLogo from "../assets/logos/codeclean2.png";
-import enjoywashdryLogo from "../assets/logos/enjoywashdry2.png";
-import matilaLogo from "../assets/logos/matila2.png";
-import brownywashdryLogo from "../assets/logos/brownywashdry2.png";
-import teruteruLogo from "../assets/logos/teruteru2.png";
-import pugguLogo from "../assets/logos/puggu2.png";
-
-import otteriBranch1Img from "../assets/stores/otteriUturn.png";      // สาขา ปตท.แยกยูเทิน
-import otteriBranch2Img from "../assets/stores/otteriubon.png"; // สาขา ถนนศรีสะเกษ-อุบล
-import otteriBranch3Img from "../assets/stores/otteri3yag.png";  // สาขา สามแยก กวงเฮง
-import otteriBranch4Img from "../assets/stores/otterigunlalag.png"; // สาขา ปั้มปตท. ถนนศรีสะเกษกันทรลักษ์
-
-import laundrybarImg from "../assets/stores/laundrybar.png";
-import kireiImg from "../assets/stores/kirei.png";
-import maruImg from "../assets/stores/maru.png";
-import washenjoyImg from "../assets/stores/washenjoy.png";
-import washmeticImg from "../assets/stores/washmetic.png";
-import duckwashImg from "../assets/stores/duckwash.png";
-import placeholderImg from "../assets/stores/placeholder.png";
-
-export const stores: Store[] = [
-  // ==================== ศรีสะเกษ ====================
-  {
-    id: "otteri-sisaket1",
-    name: "Otteri สาขา ปตท.แยกยูเทิน ศรีสะเกษ",
-    logo: otteriLogo,
-    image: otteriBranch1Img,
-    washers: 7,
-    dryers: 8,
-    maxKg: 28,
-    price: 40,
-    lat: 15.11237,
-    lng: 104.34728,
-    province: "sisaket"
-  },
-  {
-    id: "otteri-sisaket2",
-    name: "Otteri สาขา ถนนศรีสะเกษ-อุบล",
-    logo: otteriLogo,
-    image: otteriBranch2Img,
-    washers: 6,
-    dryers: 4,
-    maxKg: 18,
-    price: 40,
-    lat: 15.11403,
-    lng: 104.33741,
-    province: "sisaket"
-  },
-  {
-    id: "otteri-sisaket3",
-    name: "Otteri สาขา สามแยก กวงเฮง เมืองศรีสะเกษ",
-    logo: otteriLogo,
-    image: otteriBranch3Img,
-    washers: 7,
-    dryers: 8,
-    maxKg: 28,
-    price: 40,
-    lat: 15.10394,
-    lng: 104.32714,
-    province: "sisaket"
-  },
-  {
-    id: "otteri-sisaket4",
-    name: "Otteri สาขา ปั้มปตท. ถนนศรีสะเกษกันทรลักษ์",
-    logo: otteriLogo,
-    image: otteriBranch4Img,
-    washers: 7,
-    dryers: 8,
-    maxKg: 28,
-    price: 40,
-    lat: 15.08757,
-    lng: 104.34321,
-    province: "sisaket"
-  },
-  {
-    id: "laundrybar-sisaket",
-    name: "LaundryBar ศรีสะเกษ",
-    logo: laundrybarLogo,
-    image: laundrybarImg,
-    washers: 5,
-    dryers: 4,
-    maxKg: 20,
-    price: 40,
-    lat: 15.11951, 
-    lng: 104.32659,
-    province: "sisaket"
-  },
-  {
-    id: "kirei-sisaket",
-    name: "Kirei ถนนราชการรถไฟเมืองศรีสะเกษ",
-    logo: kireiLogo,
-    image: kireiImg,
-    washers: 8,
-    dryers: 5,
-    maxKg: 28,
-    price: 30,
-    lat: 15.11608, 
-    lng: 104.33670,
-    province: "sisaket"
-  },
-  {
-    id: "maru-sisaket",
-    name: "Maru สะดวกซักมารีหนองแคน",
-    logo: maruLogo,
-    image: maruImg,
-    washers: 4,
-    dryers: 4,
-    maxKg: 35,
-    price: 100,
-    lat: 15.10525,
-    lng: 104.32007,
-    isCombo: true,
-    province: "sisaket"
-  },
-  {
-    id: "washenjoy-sisaket",
-    name: "Washenjoy สาขา ศรีสะเกษสะดวกซัก 24 ชั่วโมง",
-    logo: washenjoyLogo,
-    image: washenjoyImg,
-    washers: 6,
-    dryers: 5,
-    maxKg: 28,
-    price: 40,
-    lat: 15.11895,
-    lng: 104.33339,
-    province: "sisaket"
-  },
-  {
-    id: "washmetic-sisaket",
-    name: "Washmetic ถนนหลังโรงพักศรีสะเกษ",
-    logo: washmeticLogo,
-    image: washmeticImg,
-    washers: 6,
-    dryers: 5,
-    maxKg: 28,
-    price: 40,
-    lat: 15.12111,
-    lng: 104.32920,
-    province: "sisaket"
-  },
-  {
-    id: "duckwash-sisaket",
-    name: "DuckWash ตรงข้ามบิกซี",
-    logo: duckwashLogo,
-    image: duckwashImg,
-    washers: 5,
-    dryers: 2,
-    maxKg: 20,
-    price: 40,
-    lat: 15.12199,
-    lng: 104.30843,
-    province: "sisaket"
-  },
-
-  // ==================== อุบลราชธานี - เมืองอุบล ====================
-  // LaundryBar
-  { 
-    id: "laundrybar-ubonBranch1", 
-    name: "LaundryBar สาขา สวนวนารมย์", 
-    logo: laundrybarLogo, 
-    image: placeholderImg, 
-    washers: 0, 
-    dryers: 0, 
-    maxKg: 0, 
-    price: 0, 
-    lat: 15.27704, 
-    lng: 104.85283, 
-    province: "ubon",
-    district: "mueang"
-  },
-  { 
-    id: "laundrybar-ubonBranch2", 
-    name: "LaundryBar สาขา สุขาอุปถัมภ์", 
-    logo: laundrybarLogo, 
-    image: placeholderImg, 
-    washers: 0, 
-    dryers: 0, 
-    maxKg: 0, 
-    price: 0, 
-    lat: 15.25120, 
-    lng: 104.83760,
-    province: "ubon",
-    district: "mueang"
-  },
-  { 
-    id: "laundrybar-ubonBranch3", 
-    name: "LaundryBar สาขา ห้วยวังนอง", 
-    logo: laundrybarLogo, 
-    image: placeholderImg, 
-    washers: 0, 
-    dryers: 0, 
-    maxKg: 0, 
-    price: 0, 
-    lat: 15.24280, 
-    lng: 104.88967, 
-    province: "ubon",
-    district: "mueang"
-  },
-
-  // WashXpress
-  {
-    id: "washxpress-ubonBranch1",
-    name: "WashXpress สาขา PT ดอนกลาง",
-    logo: washxpressLogo,
-    image: placeholderImg,
-    washers: 0,
-    dryers: 0,
-    maxKg: 0,
-    price: 0,
-    lat: 15.28883,
-    lng: 104.83759,
-    province: "ubon",
-    district: "mueang"
-  },
-  {
-    id: "washxpress-ubonBranch2",
-    name: "WashXpress ถนนคลังอาวุธ",
-    logo: washxpressLogo,
-    image: placeholderImg,
-    washers: 0,
-    dryers: 0,
-    maxKg: 0,
-    price: 0,
-    lat: 15.28095,
-    lng: 104.8750,
-    province: "ubon",
-    district: "mueang"
-  },
-  {
-    id: "washxpress-ubonBranch3",
-    name: "WashXpress สาขาถนนทุ่งหลวง",
-    logo: washxpressLogo,
-    image: placeholderImg,
-    washers: 0,
-    dryers: 0,
-    maxKg: 0,
-    price: 0,
-    lat: 15.28643,
-    lng: 104.86142,
-    province: "ubon",
-    district: "mueang"
-  },
-  {
-    id: "washxpress-ubonBranch4",
-    name: "WashXpress สาขา ซอยชยางกูร40",
-    logo: washxpressLogo,
-    image: placeholderImg,
-    washers: 0,
-    dryers: 0,
-    maxKg: 0,
-    price: 0,
-    lat: 15.27152,
-    lng: 104.84868,
-    province: "ubon",
-    district: "mueang"
-  },
-  {
-    id: "washxpress-ubonBranch5",
-    name: "WashXpress สาขา ถนนธรรมวิถี",
-    logo: washxpressLogo,
-    image: placeholderImg,
-    washers: 0,
-    dryers: 0,
-    maxKg: 0,
-    price: 0,
-    lat: 15.26210,
-    lng: 104.83640,
-    province: "ubon",
-    district: "mueang"
-  },
-  {
-    id: "washexpress-ubonBranch6",
-    name: "WashXpress สาขา ตลาดสันติสุข 2",
-    logo: washxpressLogo,
-    image: placeholderImg,
-    washers: 0,
-    dryers: 0,
-    maxKg: 0,
-    price: 0,
-    lat: 15.29596,
-    lng: 104.89030,
-    province: "ubon",
-    district: "mueang"
-  },
-  {
-    id: "washxpress-ubonBranch7",
-    name: "WashXpress สาขา อุบล-ตระการ 7",
-    logo: washxpressLogo,
-    image: placeholderImg,
-    washers: 0,
-    dryers: 0,
-    maxKg: 0,
-    price: 0,
-    lat: 15.24956,
-    lng: 104.87693,
-    province: "ubon",
-    district: "mueang"
-  },
-  {
-    id: "washxpress-ubonBranch8",
-    name: "WashXpress สาขา ห้วยวังนอง",
-    logo: washxpressLogo,
-    image: placeholderImg,
-    washers: 0,
-    dryers: 0,
-    maxKg: 0,
-    price: 0,
-    lat: 15.24956,
-    lng: 104.87693,
-    province: "ubon",
-    district: "mueang"
-  },
-  {
-    id: "washxpress-ubonBranch9",
-    name: "WashXpress สาขา สุริยาตย์20",
-    logo: washxpressLogo,
-    image: placeholderImg,
-    washers: 0,
-    dryers: 0,
-    maxKg: 0,
-    price: 0,
-    lat: 15.23953,
-    lng: 104.85682,
-    province: "ubon",
-    district: "mueang"
-  },
-  {
-    id: "washxpress-ubonBranch10",
-    name: "WashXpress สาขา ถนนจงกลนิธารณ์",
-    logo: washxpressLogo,
-    image: placeholderImg,
-    washers: 0,
-    dryers: 0,
-    maxKg: 0,
-    price: 0,
-    lat: 15.22913,
-    lng: 104.85181,
-    province: "ubon",
-    district: "mueang"
-  },
-
-  //Otteri
-  {
-    id: "otteri-ubonBranch1",
-    name: "Otteri สาขา ถนนคลังอาวุธ",
-    logo: otteriLogo,
-    image: placeholderImg,
-    washers: 0,
-    dryers: 0,
-    maxKg: 0,
-    price: 0,
-    lat: 15.28211,
-    lng: 104.83597,
-    province: "ubon",
-    district: "mueang"
-  },
-  {
-    id: "otteri-ubonBranch2",
-    name: "Otteri สาขา ชยางกูร42",
-    logo: otteriLogo,
-    image: placeholderImg,
-    washers: 0,
-    dryers: 0,
-    maxKg: 0,
-    price: 0,
-    lat: 15.27160,
-    lng: 104.85365,
-    province: "ubon",
-    district: "mueang"
-  },
-  {
-    id: "otteri-ubonBranch3",
-    name: "Otteri สาขา ตลาดหนองบัว",
-    logo: otteriLogo,
-    image: placeholderImg,
-    washers: 0,
-    dryers: 0,
-    maxKg: 0,
-    price: 0,
-    lat: 15.26235,
-    lng: 104.84358,
-    province: "ubon",
-    district: "mueang"
-  },
-  {
-    id: "otteri-ubonBranch4",
-    name: "Otteri สาขา ชยางกูร14",
-    logo: otteriLogo,
-    image: placeholderImg,
-    washers: 0,
-    dryers: 0,
-    maxKg: 0,
-    price: 0,
-    lat: 15.25721,
-    lng: 104.85128,
-    province: "ubon",
-    district: "mueang"
-  },
-  {
-    id: "otteri-ubonBranch5",
-    name: "Otteri สาขา สุขาอุปถัมภ์",
-    logo: otteriLogo,
-    image: placeholderImg,
-    washers: 0,
-    dryers: 0,
-    maxKg: 0,
-    price: 0,
-    lat: 15.25304,
-    lng: 104.83269,
-    province: "ubon",
-    district: "mueang"
-  },
-  {
-    id: "otteri-ubonBranch6",
-    name: "Otteri สาขา รร.เบ็ญจะมะมหาราช",
-    logo: otteriLogo,
-    image: placeholderImg,
-    washers: 0,
-    dryers: 0,
-    maxKg: 0,
-    price: 0,
-    lat: 15.23743,
-    lng: 104.84068,
-    province: "ubon",
-    district: "mueang"
-  },
-  {
-    id: "otteri-ubonBranch7",
-    name: "Otteri สาขา ถนนผาแดง",
-    logo: otteriLogo,
-    image: placeholderImg,
-    washers: 0,
-    dryers: 0,
-    maxKg: 0,
-    price: 0,
-    lat: 15.23526,
-    lng: 104.85757,
-    province: "ubon",
-    district: "mueang"
-  },
-  {
-    id: "otteri-ubonBranch8",
-    name: "Otteri สาขา ถนนศรีณรงค์",
-    logo: otteriLogo,
-    image: placeholderImg,
-    washers: 0,
-    dryers: 0,
-    maxKg: 0,
-    price: 0,
-    lat: 15.23526,
-    lng: 104.85759,
-    province: "ubon",
-    district: "mueang"
-  },
-  {
-    id: "otteri-ubonBranch9",
-    name: "Otteri สาขา ปตท.หัวสนามบิน",
-    logo: otteriLogo,
-    image: placeholderImg,
-    washers: 0,
-    dryers: 0,
-    maxKg: 0,
-    price: 0,
-    lat: 15.25171,
-    lng: 104.88030,
-    province: "ubon",
-    district: "mueang"
-  },
-
-  //CodeClean
-  {
-    id: "codeclean-ubonBranch1",
-    name: "CodeClean สาขา มอเตอร์ไบค์",
-    logo: codecleanLogo,
-    image: placeholderImg,
-    washers: 0,
-    dryers: 0,
-    maxKg: 0,
-    price: 0,
-    lat: 15.27254,
-    lng: 104.85392,
-    province: "ubon",
-    district: "mueang"
-  },
-  {
-    id: "codeclean-ubonBranch2",
-    name: "CodeClean สาขา โปลิเทคนิคอุบล",
-    logo: codecleanLogo,
-    image: placeholderImg,
-    washers: 0,
-    dryers: 0,
-    maxKg: 0,
-    price: 0,
-    lat: 15.26481,
-    lng: 104.84516,
-    province: "ubon",
-    district: "mueang"
-  },
-  {
-    id: "codeclean-ubonBranch3",
-    name: "CodeClean สาขา ซอยแจ้งสนิท 3",
-    logo: codecleanLogo,
-    image: placeholderImg,
-    washers: 0,
-    dryers: 0,
-    maxKg: 0,
-    price: 0,
-    lat: 15.24842,
-    lng: 104.84119,
-    province: "ubon",
-    district: "mueang"
-  },
-  {
-    id: "codeclean-ubonBranch4",
-    name: "CodeClean สาขา ปตท.บูรพาใน",
-    logo: codecleanLogo,
-    image: placeholderImg,
-    washers: 0,
-    dryers: 0,
-    maxKg: 0,
-    price: 0,
-    lat: 15.22914,
-    lng: 104.87203,
-    province: "ubon",
-    district: "mueang"
-  },
-
-  //WASHENJOY
-  {
-    id: "washenjoy-ubonBranch1",
-    name: "Washenjoy สาขา ข้างรพ.อุบลรักษ์",
-    logo: washenjoyLogo,
-    image: placeholderImg,
-    washers: 0,
-    dryers: 0,
-    maxKg: 0,
-    price: 0,
-    lat: 15.23165,
-    lng: 104.87097,
-    province: "ubon",
-    district: "mueang"
-  },
-
-  //Browny Wash&Dry
-  {
-    id: "brownywashdry-ubonBranch1",
-    name: "Browny Wash&Dry สาขา รพ.สรรพสิทธิ์",
-    logo: brownywashdryLogo,
-    image: placeholderImg,
-    washers: 0,
-    dryers: 0,
-    maxKg: 0,
-    price: 0,
-    lat: 15.23596,
-    lng: 104.86879,
-    province: "ubon",
-    district: "mueang"
-  },
-
-  //Enjoy Wash&Dry
-  {
-    id: "enjoywashdry-ubonBranch1",
-    name: "Enjoy Wash&Dry สาขา ถนนแจ้งสนิท",
-    logo: enjoywashdryLogo,
-    image: placeholderImg,
-    washers: 0,
-    dryers: 0,
-    maxKg: 0,
-    price: 0,
-    lat: 15.25397,
-    lng: 104.83577,
-    province: "ubon",
-    district: "mueang"
-  },
-
-  //Matila Wash&Dry
-  {
-    id: "matila-ubonBranch1",
-    name: "Matila Wash&Dry สาขา ถนนแจ้งสนิท",
-    logo: matilaLogo,
-    image: placeholderImg,
-    washers: 0,
-    dryers: 0,
-    maxKg: 0,
-    price: 0,
-    lat: 15.25397,
-    lng: 104.83577,
-    province: "ubon",
-    district: "mueang"
-  },
-
-  //===============วารินชำราบ===============
-  //LaundryBar
-  {
-    id: "laundrybar-warinBranch1",
-    name: "LaundryBar สาขา ถนนกันทรลักษ์-วาริน",
-    logo: laundrybarLogo,
-    image: placeholderImg,
-    washers: 0,
-    dryers: 0,
-    maxKg: 0,
-    price: 0,
-    lat: 15.19555,
-    lng: 104.86169,
-    province: "ubon",
-    district: "warin"
-  },
-  
-  //WashXpress
-  {
-    id: "washxpress-warinBranch1",
-    name: "WashXpress สาขา ตลาดวาริน",
-    logo: washxpressLogo,
-    image: placeholderImg,
-    washers: 0,
-    dryers: 0,
-    maxKg: 0,
-    price: 0,
-    lat: 15.19665,
-    lng: 104.86542,
-    province: "ubon",
-    district: "warin"
-  },
-  {
-    id: "washxpress-warinBranch2",
-    name: "WashXpress สาขา บ้านแขม",
-    logo: washxpressLogo,
-    image: placeholderImg,
-    washers: 0,
-    dryers: 0,
-    maxKg: 0,
-    price: 0,
-    lat: 15.11107,
-    lng: 104.89447,
-    province: "ubon",
-    district: "warin"
-  },
-  {
-    id: "washxpress-warinBranch3",
-    name: "WashXpress สาขา บ้านศรีไค",
-    logo: washxpressLogo,
-    image: placeholderImg,
-    washers: 0,
-    dryers: 0,
-    maxKg: 0,
-    price: 0,
-    lat: 15.10853,
-    lng: 104.90442,
-    province: "ubon",
-    district: "warin"
-  },
-
-  //Otteri
-  {
-    id: "otteri-warinBranch1",
-    name: "Otteri สาขา หน้ารพ.วาริน",
-    logo: otteriLogo,
-    image: placeholderImg,
-    washers: 0,
-    dryers: 0,
-    maxKg: 0,
-    price: 0,
-    lat: 15.19449,
-    lng: 104.83828,
-    province: "ubon",
-    district: "warin"
-  },
-  {
-    id: "otteri-warinBranch2",
-    name: "Otteri สาขา เซฟแลนด์วารินชำราบ",
-    logo: otteriLogo,
-    image: placeholderImg,
-    washers: 0,
-    dryers: 0,
-    maxKg: 0,
-    price: 0,
-    lat: 15.19596,
-    lng: 104.86182,
-    province: "ubon",
-    district: "warin"
-  },
-
-  //CodeClean
-  {
-    id: "codeclean-warinBranch1",
-    name: "CodeClean สาขา หน้ามอ อุบล",
-    logo: codecleanLogo,
-    image: placeholderImg,
-    washers: 0,
-    dryers: 0,
-    maxKg: 0,
-    price: 0,
-    lat: 15.11213,
-    lng: 104.90042,
-    province: "ubon",
-    district: "warin"
-  },
-  {
-    id: "codeclean-warinBranch2",
-    name: "CodeClean สาขา สุะพานดำวารินชำราบ",
-    logo: codecleanLogo,
-    image: placeholderImg,
-    washers: 0,
-    dryers: 0,
-    maxKg: 0,
-    price: 0,
-    lat: 15.19665,
-    lng: 104.85460,
-    province: "ubon",
-    district: "warin"
-  },
-
-  //TERU TERU Wash&Dry
-  {
-    id: "teruteru-warinBranch1",
-    name: "TERU TERU Wash&Dry สาขา วารินชำราบ",
-    logo: teruteruLogo,
-    image: placeholderImg,
-    washers: 0,
-    dryers: 0,
-    maxKg: 0,
-    price: 0,
-    lat: 15.16046,
-    lng: 104.85452,
-    province: "ubon",
-    district: "warin"
-  },
-
-  //Puggu
-  {
-    id: "puggu-warinBranch1",
-    name: "Puggu สาขา ตลาดแม่กิมเตียง",
-    logo: pugguLogo,
-    image: placeholderImg,
-    washers: 0,
-    dryers: 0,
-    maxKg: 0,
-    price: 0,
-    lat: 15.18440,
-    lng: 104.85868,
-    province: "ubon",
-    district: "warin"
-  },
-];
 
 /* =========================
    COMPONENTS
@@ -926,12 +172,48 @@ function ChangeView({ center, zoom }: { center: [number, number]; zoom: number }
 }
 
 const LaundryPage: React.FC = () => {
+  const [stores, setStores] = useState<Store[]>([]);
   const [kg, setKg] = useState<number | "">("");
   const [price, setPrice] = useState<number | "">("");
   const [selectedStore, setSelectedStore] = useState<Store | null>(null);
   const [selectedProvince, setSelectedProvince] = useState<"all" | "sisaket" | "ubon">("all");
   const [selectedDistrict, setSelectedDistrict] = useState<"all" | "mueang" | "warin">("all");
   const { t } = useTranslation();
+
+  useEffect(() => {
+    const fetchStores = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('stores')
+          .select('*')
+          .order('created_at', { ascending: false });
+
+        if (error) throw error;
+        
+        const mappedStores = (data || []).map(row => ({
+          id: row.id,
+          name: row.name,
+          logo: row.logo,
+          image: row.image,
+          washers: row.washers,
+          dryers: row.dryers,
+          maxKg: row.max_kg,
+          price: row.price,
+          lat: row.lat,
+          lng: row.lng,
+          isCombo: row.is_combo,
+          province: row.province,
+          district: row.district
+        }));
+        
+        setStores(mappedStores);
+      } catch (error) {
+        console.error("Error fetching stores:", error);
+      }
+    };
+
+    fetchStores();
+  }, []);
 
   useEffect(() => {
     if (!selectedStore) return;
@@ -975,6 +257,7 @@ const LaundryPage: React.FC = () => {
 
   return (
     <section className="min-h-screen bg-[#F8F9FB] text-slate-900 pb-20 relative">
+      <SEO title="ร้านสะดวกซัก" description="ค้นหาร้านสะดวกซัก SENd ใกล้คุณ พร้อมคำนวณราคาค่าซัก ดูแผนที่สาขาทั่วประเทศ" path="/laundry" />
 
       {/* HERO BACKGROUND IMAGE - extends to half of search bar */}
       <div className="absolute inset-x-0 top-0 h-[750px] overflow-hidden">
@@ -1030,7 +313,7 @@ const LaundryPage: React.FC = () => {
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
               />
               {stores.map((store) => (
-                <Marker key={store.id} position={[store.lat, store.lng]} icon={createStoreIcon(websiteLogo)}>
+                <Marker key={store.id} position={[store.lat, store.lng]} icon={createStoreIcon(markerLogo)}>
                   <Popup>
                     <div className="font-sans min-w-[200px]">
                       <h3 className="font-bold text-sm mb-1">{store.name}</h3>
@@ -1361,7 +644,7 @@ const LaundryPage: React.FC = () => {
                         />
                         <Marker 
                           position={[selectedStore.lat, selectedStore.lng]} 
-                          icon={createStoreIcon(websiteLogo)}
+                          icon={createStoreIcon(markerLogo)}
                         />
                       </MapContainer>
                     </div>
@@ -1444,7 +727,7 @@ const LaundryPage: React.FC = () => {
                       />
                       <Marker 
                         position={[selectedStore.lat, selectedStore.lng]} 
-                        icon={createStoreIcon(websiteLogo)}
+                        icon={createStoreIcon(markerLogo)}
                       />
                     </MapContainer>
                   </div>

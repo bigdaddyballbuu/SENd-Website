@@ -129,3 +129,28 @@ body {
   background-size: 200% auto;
   animation: gradient 3s ease infinite;
 }
+
+/* ===== Custom Scrollbar ===== */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 8px;
+  border: 2px solid var(--color-bg); /* Adds padding effect */
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-brand);
+}
+
+html {
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 var(--color-bg);
+}

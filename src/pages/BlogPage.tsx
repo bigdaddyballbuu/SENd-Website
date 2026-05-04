@@ -1,8 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
 import Footer from "../components/Footer";
 import { useTranslation } from "react-i18next";
+import { supabase } from "../lib/supabase";
+import DOMPurify from 'dompurify';
+import SEO from "../components/SEO";
 
 // Types
 interface BlogPost {
@@ -30,9 +33,41 @@ const BlogPage = () => {
     const [selectedPost, setSelectedPost] = useState<BlogPost | null>(null);
     const [filterIdx, setFilterIdx] = useState(0);
     const [search, setSearch] = useState("");
+    const [dynamicBlogs, setDynamicBlogs] = useState<BlogPost[]>([]);
+
+    const stripHtml = (html: string | undefined | null) => {
+      if (!html) return "";
+      const doc = new DOMParser().parseFromString(html, 'text/html');
+      return doc.body.textContent || "";
+    };
+
+    useEffect(() => {
+      const fetchBlogs = async () => {
+        const { data } = await supabase
+          .from('blogs')
+          .select('*')
+          .eq('active', true)
+          .order('created_at', { ascending: false });
+          
+        if (data) {
+          const formattedBlogs = data.map(b => ({
+            id: b.id,
+            category: b.category,
+            title: b.title,
+            excerpt: b.excerpt,
+            image: b.image_url,
+            date: new Date(b.created_at).toLocaleDateString("th-TH", { day: 'numeric', month: 'short', year: 'numeric' }),
+            readTime: b.read_time,
+            content: b.content
+          }));
+          setDynamicBlogs(formattedBlogs);
+        }
+      };
+      fetchBlogs();
+    }, []);
 
     // Build translated posts from config
-    const BLOG_POSTS: BlogPost[] = postConfig.map(cfg => ({
+    const staticPosts: BlogPost[] = postConfig.map(cfg => ({
       id: cfg.id,
       image: cfg.image,
       category: t(`blog.${cfg.categoryKey}`),
@@ -42,6 +77,8 @@ const BlogPage = () => {
       readTime: t(`blog.${cfg.readTimeKey}`),
       content: t(`blog.${cfg.contentKey}`),
     }));
+
+    const BLOG_POSTS = [...dynamicBlogs, ...staticPosts];
 
     const categories = [
       t('blog.filterAll'),
@@ -61,6 +98,21 @@ const BlogPage = () => {
 
   return (
     <>
+      {selectedPost ? (
+        <SEO 
+          title={selectedPost.title} 
+          description={stripHtml(selectedPost.excerpt || selectedPost.content)} 
+          image={selectedPost.image} 
+          path="/blog" 
+        />
+      ) : (
+        <SEO 
+          title="บทความและเคล็ดลับซักผ้า" 
+          description="รวมบทความน่ารู้ ทริคเด็ดๆ เกี่ยวกับการดูแลเสื้อผ้าให้หอมสะอาดและถนอมเนื้อผ้า" 
+          path="/blog" 
+        />
+      )}
+      
       <section className="min-h-screen bg-[#F8F9FB] pt-28 pb-20">
         <div className="max-w-7xl mx-auto px-6">
           
@@ -256,8 +308,8 @@ const BlogPage = () => {
                   </div>
                   
                   <div 
-                    className="prose prose-slate prose-lg max-w-none text-slate-600 leading-relaxed"
-                    dangerouslySetInnerHTML={{ __html: selectedPost.content }} 
+                    className="prose prose-slate prose-lg max-w-none text-slate-600 leading-relaxed prose-headings:text-slate-900 prose-a:text-[#ff2500] prose-img:rounded-2xl"
+                    dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(selectedPost.content) }} 
                   />
 
                   <div className="mt-12 pt-8 border-t border-slate-100 text-center">

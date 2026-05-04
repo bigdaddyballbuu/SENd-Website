@@ -2,6 +2,9 @@ import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import bgAnnouncement from "../assets/bg/bg-feed.png";
 import { useTranslation } from "react-i18next";
+import SEO from "../components/SEO";
+import DOMPurify from 'dompurify';
+import { Link } from "react-router-dom";
 
 /* =========================
    TYPES
@@ -20,154 +23,7 @@ interface Announcement {
   source: "sheet" | "app";
 }
 
-/* =========================
-   CONFIG
-========================= */
-/* =========================
-   GOOGLE SHEETS SETUP INSTRUCTIONS
-   =========================
-   1. Create a new Google Sheet.
-   2. Add the following columns in Row 1 (exact spelling):
-      id | title | description | type | active | created_at | image_url | code
-   3. Fill in your data:
-      - id: Unique ID (e.g., 1, 2, promo-1)
-      - type: promo | notice | system | urgent
-      - active: TRUE or FALSE
-      - date columns: YYYY-MM-DD
-   4. Go to File > Share > Publish to web.
-   5. Select "Sheet1" (or your sheet name) and format "Comma-separated values (.csv)".
-   6. Click Publish and copy the link.
-   7. Paste the link below in GOOGLE_SHEET_CSV_URL.
-========================= */
-
-//const GOOGLE_SHEET_CSV_URL = import.meta.env.VITE_GOOGLE_SHEET_CSV_URL;  .env
-
-
-// ⬇️⬇️⬇️ ใส่ลิ้งค์ Google Sheet (CSV) ที่นี่ได้เลยครับ ⬇️⬇️⬇️
-const GOOGLE_SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRN-8ANTJTDE9iz5IkwO5bNc7DUJfWhBGOXRtnZglZybSA_Urcdlavj_xQEvHJu4Sc7zTTqJgKqpmow/pub?gid=0&single=true&output=csv"; // <--- ใส่ลิ้งค์ตรงนี้ 
-
-/* =========================
-   CSV PARSER HELPER
-========================= */
-const parseCSV = (text: string): any[] => {
-  // Normalize line endings
-  const source = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
-  const headers: string[] = [];
-  const result: any[] = [];
-  
-  let cursor = 0;
-  let inQuote = false;
-  let currentValue = '';
-
-  // Extract headers first
-  while (cursor < source.length) {
-    const char = source[cursor];
-    
-    if (inQuote) {
-      if (char === '"') {
-        if (source[cursor + 1] === '"') {
-          currentValue += '"'; // updates "" to "
-          cursor++;
-        } else {
-          inQuote = false;
-        }
-      } else {
-        currentValue += char;
-      }
-    } else {
-      if (char === '"') {
-        inQuote = true;
-      } else if (char === ',') {
-        headers.push(currentValue.trim().replace(/^"|"$/g, ''));
-        currentValue = '';
-      } else if (char === '\n') {
-        headers.push(currentValue.trim().replace(/^"|"$/g, ''));
-        currentValue = '';
-        cursor++;
-        break; // Headers done
-      } else {
-        currentValue += char;
-      }
-    }
-    cursor++;
-  }
-
-  // Parse Rows
-  let currentValues: string[] = [];
-  currentValue = '';
-  inQuote = false;
-
-  while (cursor < source.length) {
-    const char = source[cursor];
-
-    if (inQuote) {
-      if (char === '"') {
-        if (source[cursor + 1] === '"') {
-          currentValue += '"';
-          cursor++;
-        } else {
-          inQuote = false;
-        }
-      } else {
-        currentValue += char;
-      }
-    } else {
-      if (char === '"') {
-        inQuote = true;
-      } else if (char === ',') {
-        currentValues.push(currentValue);
-        currentValue = '';
-      } else if (char === '\n') {
-        currentValues.push(currentValue);
-        
-        // Assemble Row
-        if (currentValues.length > 1 || currentValues[0] !== '') { // Skip empty lines
-             const obj: any = {};
-             headers.forEach((h, i) => {
-                 let val = currentValues[i] || '';
-                 // Cleanup potential wrapping quotes if parser didn't catch them all or specific CSV formatting
-                 if (val.startsWith('"') && val.endsWith('"') && val.length >= 2) {
-                     val = val.slice(1, -1).replace(/""/g, '"');
-                 } else {
-                     val = val.trim();
-                 }
-
-                 if (h === 'active') obj[h] = (val.toLowerCase() === 'true');
-                 else obj[h] = val;
-             });
-             result.push(obj);
-        }
-
-        currentValue = '';
-        currentValues = [];
-      } else {
-        currentValue += char;
-      }
-    }
-    cursor++;
-  }
-  
-  // Push last row if exists
-  if (currentValues.length > 0 || currentValue !== '') {
-      currentValues.push(currentValue);
-      const obj: any = {};
-      headers.forEach((h, i) => {
-             let val = currentValues[i] || '';
-             if (val.startsWith('"') && val.endsWith('"') && val.length >= 2) {
-                 val = val.slice(1, -1).replace(/""/g, '"');
-             } else {
-                 val = val.trim();
-             }
-             if (h === 'active') obj[h] = (val.toLowerCase() === 'true');
-             else obj[h] = val;
-      });
-      result.push(obj);
-  }
-
-  return result;
-};
-
-
+import { supabase } from "../lib/supabase";
 const typeConfig: Record<AnnouncementType, { label: string; bg: string; text: string; icon: string }> = {
   promo: { 
       label: "PROMOTION", 
@@ -200,10 +56,17 @@ const typeConfig: Record<AnnouncementType, { label: string; bg: string; text: st
 ========================= */
 const AnnouncementPage = () => {
   const { t } = useTranslation();
+
+  const stripHtml = (html: string) => {
+    if (!html) return "";
+    const doc = new DOMParser().parseFromString(html, 'text/html');
+    return doc.body.textContent || "";
+  };
   const [promos, setPromos] = useState<Announcement[]>([]);
   const [prNews, setPrNews] = useState<Announcement[]>([]);
   const [appUpdates, setAppUpdates] = useState<Announcement[]>([]);
   const [urgentNews, setUrgentNews] = useState<Announcement[]>([]);
+  const [latestBlogs, setLatestBlogs] = useState<any[]>([]);
 
   const [selected, setSelected] = useState<Announcement | null>(null);
   const [loading, setLoading] = useState(true);
@@ -213,130 +76,40 @@ const AnnouncementPage = () => {
   ========================= */
   useEffect(() => {
     const fetchData = async () => {
-      // Fetch ALL data from Google Sheets
-      const fetchSheet = async () => {
-        try {
-           // Check if URL is placeholder
-           if (GOOGLE_SHEET_CSV_URL.includes("xxxxxxxx")) {
-               console.warn("Using Mock Data: Google Sheet URL is not set.");
-               throw new Error("Using Mock Data");
-           }
-
-           const response = await fetch(`${GOOGLE_SHEET_CSV_URL}&t=${new Date().getTime()}`);
-           const text = await response.text();
-           const data = parseCSV(text);
-           
-           // Validate and map data (ensure type safety)
-           return data.map((item: any) => ({
-               id: item.id || Math.random().toString(),
-               title: item.title || "No Title",
-               description: item.description || "",
-               type: (["promo", "notice", "system", "urgent"].includes(item.type) ? item.type : "notice") as AnnouncementType,
-               active: item.active === true || item.active === "TRUE",
-               created_at: item.created_at || new Date().toISOString(),
-               image_url: item.image_url || "",
-               code: item.code || "",
-               source: "sheet" as const
-           })).filter(item => item.active); // Filter active only
-
-        } catch (e) {
-           console.log("Fallback to mock data...");
-           // MOCK DATA SIMULATING SHEET ROWS
-           // Columns: id, title, description, type, active, created_at, image_url
-           const sheetRows: Announcement[] = [
-               // --- URGENT ---
-               {
-                   id: "row-0",
-                   title: "ประกาศ: ปิดปรับปรุงระบบซักด่วน (ตัวอย่าง)",
-                   description: "นี่คือข้อมูลตัวอย่าง (Mock Data) เนื่องจากยังไม่ได้ใส่ลิงก์ Google Sheet \nหากคุณใส่ลิงก์แล้ว ข้อมูลนี้จะหายไปและแสดงข้อมูลจริงแทนครับ",
-                   type: "urgent",
-                   active: true,
-                   created_at: new Date().toISOString(),
-                   image_url: "",
-                   source: "sheet"
-               },
-               // --- PROMOS ---
-               {
-                   id: "row-1",
-                   title: "โปรฯ ซักฟรี 100 บาท!",
-                   description: "เพียงสมัครสมาชิกใหม่วันนี้ รับเลยเครดิตซักฟรี 100 บาท ทันที \n*เงื่อนไขเป็นไปตามที่บริษัทกำหนด",
-                   type: "promo",
-                   active: true,
-                   created_at: new Date().toISOString(),
-                   image_url: "https://images.unsplash.com/photo-1545173168-9f1947eebb8f?q=80&w=2071&auto=format&fit=crop",
-                   code: "SEND100",
-                   source: "sheet"
-               },
-               {
-                   id: "row-2",
-                   title: "ลด 50% ทุกวันพุธ",
-                   description: "Member Day! ลดค่าบริการซัก-อบ 50% ทุกออเดอร์ไม่มีขั้นต่ำ เฉพาะวันพุธเท่านั้น",
-                   type: "promo",
-                   active: true,
-                   created_at: new Date().toISOString(),
-                   image_url: "https://images.unsplash.com/photo-1517677208171-0bc5e25bb396?q=80&w=2070&auto=format&fit=crop",
-                   source: "sheet"
-               },
-               // --- PR NEWS ---
-               {
-                   id: "row-3",
-                   title: "เปิดสาขาใหม่! ศรีสะเกษ",
-                   description: "ชาวศรีสะเกษเตรียมตัวให้พร้อม พบกับ SENd สาขาใหม่ใจกลางเมือง ใกล้ตึกสุนีย์ พร้อมโปรโมชั่นเปิดร้านเพียบ!",
-                   type: "notice",
-                   active: true,
-                   created_at: "2024-12-25T00:00:00Z",
-                   image_url: "https://images.unsplash.com/photo-1556740758-90de374c12ad?q=80&w=2070&auto=format&fit=crop",
-                   source: "sheet"
-               },
-               {
-                   id: "row-4",
-                   title: "ร่วมมือกับ LaundryBar",
-                   description: "SENd จับมือ LaundryBar ขยายเครือข่ายร้านซักมาตรฐานโลกกว่า 50 สาขา เพื่อรองรับความต้องการที่มากขึ้น",
-                   type: "notice",
-                   active: true,
-                   created_at: "2024-12-20T00:00:00Z",
-                   image_url: "https://images.unsplash.com/photo-1521791136064-7986c2920216?q=80&w=2069&auto=format&fit=crop",
-                   source: "sheet"
-               },
-               // --- APP UPDATES (SYSTEM) ---
-               {
-                   id: "row-5",
-                   title: "อัปเดตเวอร์ชั่น 1.2.0",
-                   description: "🎉 สิ่งใหม่ในเวอร์ชั่นนี้:\n- ⚡ รองรับ Dark Mode เต็มรูปแบบ\n- 🚀 เพิ่มความเร็วในการโหลดแผนที่ 50%\n- 🐛 แก้ไขบั๊กการแจ้งเตือน",
-                   type: "system",
-                   active: true,
-                   created_at: "2024-12-28T00:00:00Z",
-                   image_url: "https://images.unsplash.com/photo-1551650975-87deedd944c3?q=80&w=1974&auto=format&fit=crop",
-                   source: "sheet"
-               },
-               {
-                   id: "row-6",
-                   title: "แจ้งปิดปรับปรุงเซิร์ฟเวอร์",
-                   description: "ระบบจะทำการปิดปรับปรุงชั่วคราวในวันที่ 1 ม.ค. 2025 เวลา 02:00 - 04:00 น. ขออภัยในความไม่สะดวกครับ",
-                   type: "system",
-                   active: true,
-                   created_at: "2024-12-30T00:00:00Z",
-                   image_url: "",
-                   source: "sheet"
-               }
-           ];
-           
-           return sheetRows;
-        }
-      };
-
-      // Fetch
       setLoading(true);
-      await new Promise(r => setTimeout(r, 600)); // Fake loading
-      const allData = await fetchSheet();
+      try {
+        const { data, error } = await supabase
+          .from('news')
+          .select('*')
+          .eq('active', true)
+          .order('created_at', { ascending: false });
+          
+        if (error) throw error;
+        
+        const allData = data || [];
 
-      // Filter by Type
-      setPromos(allData.filter(d => d.type === 'promo'));
-      setPrNews(allData.filter(d => d.type === 'notice'));
-      setAppUpdates(allData.filter(d => d.type === 'system'));
-      setUrgentNews(allData.filter(d => d.type === 'urgent'));
+        // Filter by Type
+        setPromos(allData.filter(d => d.type === 'promo'));
+        setPrNews(allData.filter(d => d.type === 'notice'));
+        setAppUpdates(allData.filter(d => d.type === 'system'));
+        setUrgentNews(allData.filter(d => d.type === 'urgent'));
 
-      setLoading(false);
+        // Fetch top 3 latest blogs
+        const { data: blogData } = await supabase
+          .from('blogs')
+          .select('*')
+          .eq('active', true)
+          .order('created_at', { ascending: false })
+          .limit(3);
+        
+        if (blogData) {
+          setLatestBlogs(blogData);
+        }
+      } catch (error) {
+        console.error("Error fetching news:", error);
+      } finally {
+        setLoading(false);
+      }
     };
 
     fetchData();
@@ -344,6 +117,7 @@ const AnnouncementPage = () => {
 
   return (
     <div className="min-h-screen bg-slate-950">
+      <SEO title="ข่าวสารและโปรโมชั่น" description="ข่าวสาร โปรโมชั่น ส่วนลดพิเศษ และอัปเดตล่าสุดจาก SENd ซักอบรีด" path="/announcement" />
       
       {/* ==================== HERO SECTION ==================== */}
       <div className="relative overflow-hidden">
@@ -443,7 +217,7 @@ const AnnouncementPage = () => {
                       {/* Secondary Glow Layer */}
                       <div className="absolute -inset-0.5 bg-gradient-to-r from-red-500 to-orange-500 rounded-3xl opacity-90" />
                       
-                      <div className="relative bg-gradient-to-r from-red-600 via-red-500 to-red-600 rounded-3xl p-6 md:p-8 flex gap-5 items-center shadow-2xl shadow-red-500/50 overflow-hidden">
+                      <div className="relative bg-gradient-to-r from-red-600 via-red-500 to-red-600 rounded-3xl p-4 md:p-5 flex gap-4 items-center shadow-2xl shadow-red-500/50 overflow-hidden">
                         
                         {/* Shimmer Effect */}
                         <div className="absolute inset-0 animate-shimmer" style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent)', backgroundSize: '200% 100%' }} />
@@ -451,25 +225,24 @@ const AnnouncementPage = () => {
                         {/* Pulsing Light Effect */}
                         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent animate-pulse-light" />
                         
-                        <div className="relative w-16 h-16 md:w-20 md:h-20 rounded-2xl bg-white/20 backdrop-blur flex items-center justify-center shrink-0 text-3xl md:text-4xl animate-bounce-slow">
+                        <div className="relative w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-white/20 backdrop-blur flex items-center justify-center shrink-0 text-2xl md:text-3xl animate-bounce-slow">
                           🚨
                         </div>
                         <div className="relative flex-1 min-w-0">
-                          <div className="flex items-center gap-3 mb-2">
-                            <span className="text-xs font-bold bg-white/30 text-white px-3 py-1.5 rounded-full uppercase tracking-wider shadow-lg animate-pulse">
+                          <div className="flex items-center gap-2 mb-1">
+                            <span className="text-[10px] md:text-xs font-bold bg-white/30 text-white px-2.5 py-1 rounded-full uppercase tracking-wider shadow-lg animate-pulse">
                               🔴 Urgent
                             </span>
                             <span className="flex items-center gap-1">
-                              <span className="w-2 h-2 rounded-full bg-white animate-ping" />
-                              <span className="w-2 h-2 rounded-full bg-white/80 animate-pulse" style={{ animationDelay: '0.2s' }} />
-                              <span className="w-2 h-2 rounded-full bg-white/60 animate-pulse" style={{ animationDelay: '0.4s' }} />
+                              <span className="w-1.5 h-1.5 rounded-full bg-white animate-ping" />
+                              <span className="w-1.5 h-1.5 rounded-full bg-white/80 animate-pulse" style={{ animationDelay: '0.2s' }} />
                             </span>
                           </div>
-                          <h3 className="text-white font-bold text-xl md:text-2xl mb-1 truncate drop-shadow-lg">{item.title}</h3>
-                          <p className="text-white/90 text-sm md:text-base line-clamp-2">{item.description}</p>
+                          <h3 className="text-white font-bold text-lg md:text-xl mb-0.5 truncate drop-shadow-lg">{item.title}</h3>
+                          <p className="text-white/90 text-xs md:text-sm line-clamp-1">{stripHtml(item.description)}</p>
                         </div>
-                        <div className="relative hidden md:flex w-14 h-14 rounded-full bg-white/20 items-center justify-center group-hover:bg-white/40 transition-all group-hover:scale-110 backdrop-blur">
-                          <svg className="w-6 h-6 text-white group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div className="relative hidden md:flex w-10 h-10 rounded-full bg-white/20 items-center justify-center group-hover:bg-white/40 transition-all group-hover:scale-110 backdrop-blur">
+                          <svg className="w-5 h-5 text-white group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7" />
                           </svg>
                         </div>
@@ -543,7 +316,7 @@ const AnnouncementPage = () => {
                           <h3 className={`text-white font-bold leading-tight mb-2 ${index === 0 ? 'text-2xl md:text-3xl' : 'text-xl'}`}>
                             {item.title}
                           </h3>
-                          <p className="text-white/80 text-sm line-clamp-2">{item.description}</p>
+                          <p className="text-white/80 text-sm line-clamp-2">{stripHtml(item.description)}</p>
                           
                           {item.code && (
                             <div className="mt-4 inline-flex items-center gap-2 bg-white/20 backdrop-blur rounded-lg px-3 py-1.5">
@@ -557,6 +330,80 @@ const AnnouncementPage = () => {
                   ))}
                 </div>
               </motion.div>
+
+              {/* =========================================
+                  1.5 เคล็ดลับซักผ้าและบทความ (Blogs & Tips)
+                 ========================================= */}
+              {latestBlogs.length > 0 && (
+                <motion.div 
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.15 }}
+                  className="mb-20"
+                >
+                  <div className="flex items-center justify-between mb-8">
+                    <div className="flex items-center gap-4">
+                      <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-green-500 to-emerald-500 flex items-center justify-center text-2xl shadow-lg shadow-green-500/30">
+                        📖
+                      </div>
+                      <div>
+                        <h2 className="text-2xl md:text-3xl font-bold text-slate-900">เคล็ดลับซักผ้าและบทความ</h2>
+                        <p className="text-slate-500">ทริคดีๆ ที่ช่วยให้ผ้าหอมสะอาดและถนอมใยผ้า</p>
+                      </div>
+                    </div>
+                    <Link 
+                      to="/blog"
+                      className="hidden md:flex items-center gap-2 text-[#ff2500] font-bold bg-orange-50 px-4 py-2 rounded-xl hover:bg-[#ff2500] hover:text-white transition-colors"
+                    >
+                      ดูบทความทั้งหมด
+                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                      </svg>
+                    </Link>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    {latestBlogs.map((blog) => (
+                      <Link
+                        key={blog.id}
+                        to="/blog"
+                        className="group bg-white rounded-3xl overflow-hidden shadow-lg shadow-slate-200/50 border border-slate-100 hover:-translate-y-1 transition-all duration-300 flex flex-col"
+                      >
+                        <div className="h-48 overflow-hidden relative">
+                          {blog.image_url ? (
+                            <img src={blog.image_url} alt={blog.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                          ) : (
+                            <div className="w-full h-full bg-slate-100 flex items-center justify-center text-4xl">📖</div>
+                          )}
+                          <div className="absolute top-4 left-4">
+                            <span className="bg-white/90 backdrop-blur px-3 py-1 rounded-lg text-xs font-bold text-[#ff2500]">
+                              {blog.category}
+                            </span>
+                          </div>
+                        </div>
+                        <div className="p-6 flex flex-col flex-grow">
+                          <h3 className="text-xl font-bold text-slate-900 mb-3 leading-tight group-hover:text-[#ff2500] transition-colors line-clamp-2">
+                            {blog.title}
+                          </h3>
+                          <p className="text-slate-500 text-sm line-clamp-2 mb-4 flex-grow">
+                            {stripHtml(blog.excerpt || blog.content)}
+                          </p>
+                          <div className="flex items-center text-[#ff2500] font-bold text-sm mt-auto">
+                            อ่านต่อ <svg className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
+                          </div>
+                        </div>
+                      </Link>
+                    ))}
+                  </div>
+                  
+                  <Link 
+                    to="/blog"
+                    className="mt-6 md:hidden flex justify-center items-center gap-2 text-[#ff2500] font-bold bg-orange-50 px-4 py-3 rounded-xl active:bg-[#ff2500] active:text-white transition-colors text-center w-full"
+                  >
+                    ดูบทความทั้งหมด
+                  </Link>
+                </motion.div>
+              )}
 
               {/* =========================================
                   2. ข่าวประชาสัมพันธ์ (Bento Grid)
@@ -620,7 +467,7 @@ const AnnouncementPage = () => {
                               {item.title}
                             </h3>
                             <p className={`text-slate-500 ${index === 0 ? 'line-clamp-3' : 'line-clamp-2 text-sm'}`}>
-                              {item.description}
+                              {stripHtml(item.description)}
                             </p>
                             <div className="mt-4 flex items-center text-sm font-semibold text-[#ff2500] group-hover:gap-2 transition-all">
                               <span>{t('announcement.readMore')}</span>
@@ -698,7 +545,7 @@ const AnnouncementPage = () => {
                                 {item.title}
                               </h3>
                               <p className="text-sm text-slate-500 line-clamp-2 mb-4">
-                                {item.description}
+                                {stripHtml(item.description)}
                               </p>
                               <div className="flex items-center text-sm font-bold text-blue-600 group-hover:gap-2 transition-all">
                                 <span>{t('announcement.readDetail')}</span>
@@ -771,9 +618,10 @@ const AnnouncementPage = () => {
                     </h2>
                  </div>
 
-                <div className="prose prose-slate max-w-none text-slate-600 leading-relaxed whitespace-pre-line flex-grow">
-                  {selected.description}
-                </div>
+                <div 
+                  className="prose prose-slate max-w-none text-slate-600 leading-relaxed flex-grow prose-headings:text-slate-900 prose-a:text-[#ff2500] hover:prose-a:text-orange-600 prose-img:rounded-xl"
+                  dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(selected.description) }}
+                />
 
                 {selected.type === 'promo' && selected.code && (
                   <div className="mt-8 pt-6 border-t border-slate-100">

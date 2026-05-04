@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTranslation } from "react-i18next";
+import SEO from "../components/SEO";
 
 // Hero background image
 import partnerHeroBg from "../assets/bg/bg-laundry.png";
@@ -22,6 +23,7 @@ const PartnerPage: React.FC = () => {
 
   return (
     <section className="min-h-screen bg-[#F8F9FB] text-slate-900 pb-20">
+      <SEO title="สมัครเป็นพาร์ทเนอร์" description="สมัครเป็นพาร์ทเนอร์ร้านซักอบหรือไรเดอร์กับ SENd เพิ่มรายได้ มีทีมซัพพอร์ต" path="/partner" />
 
       {/* HERO SECTION WITH BACKGROUND IMAGE */}
       <div className="relative">
