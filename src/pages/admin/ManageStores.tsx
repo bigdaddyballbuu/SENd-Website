@@ -24,6 +24,7 @@ const ManageStores = () => {
   const [stores, setStores] = useState<Store[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
+  const [filterProvince, setFilterProvince] = useState("all");
   const { toast } = useToast();
 
   // Modal State
@@ -190,10 +191,11 @@ const ManageStores = () => {
     }
   };
 
-  const filteredStores = stores.filter(s => 
-    s.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    s.province.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredStores = stores.filter(s => {
+    const matchesSearch = s.name.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesProvince = filterProvince === "all" || s.province === filterProvince;
+    return matchesSearch && matchesProvince;
+  });
 
   return (
     <div className="max-w-6xl mx-auto space-y-6">
@@ -203,12 +205,23 @@ const ManageStores = () => {
           <p className="text-slate-500">เพิ่ม ลบ แก้ไข สาขาร้านซักผ้าในแผนที่</p>
         </div>
         
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
+          <div className="flex items-center gap-2">
+            <select
+              value={filterProvince}
+              onChange={(e) => setFilterProvince(e.target.value)}
+              className="px-4 py-2 border border-slate-200 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-[#ff2500]/20 focus:border-[#ff2500] text-slate-700 font-medium cursor-pointer"
+            >
+              <option value="all">ทุกจังหวัด</option>
+              <option value="sisaket">ศรีสะเกษ</option>
+              <option value="ubon">อุบลราชธานี</option>
+            </select>
+          </div>
           <div className="relative">
             <Search className="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
             <input
               type="text"
-              placeholder="ค้นหาสาขา, จังหวัด..."
+              placeholder="ค้นหาชื่อสาขา..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10 pr-4 py-2 border border-slate-200 rounded-xl w-full sm:w-64 focus:outline-none focus:ring-2 focus:ring-[#ff2500]/20 focus:border-[#ff2500]"
